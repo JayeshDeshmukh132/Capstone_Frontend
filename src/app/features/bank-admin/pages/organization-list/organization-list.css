@@ -1,0 +1,19 @@
+.container {
+    padding: 2rem;
+}
+
+mat-table {
+    margin-top: 1rem;
+}
+
+.pending {
+    color: orange;
+}
+
+.approved {
+    color: green;
+}
+
+.rejected {
+    color: red;
+}

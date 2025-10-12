@@ -1,0 +1,10 @@
+<div style="padding: 1rem">
+  <h2>Organization Page</h2>
+  <p>Welcome, role: ORG</p>
+  @if (token) {
+  <p>Token (start): {{ token.slice(0, 60) }}{{ token.length > 60 ? '...' : '' }}</p>
+  } @else {
+  <p>No token found.</p>
+  }
+  <button (click)="logout()">Logout</button>
+</div>
