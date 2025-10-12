@@ -1,0 +1,24 @@
+<section style="max-width:420px;margin:2rem auto;padding:1rem;border:1px solid #eee;border-radius:8px">
+      <h3>Login</h3>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div style="margin-bottom:.75rem">
+          <label for="email" style="display:block;font-weight:600">Email</label>
+          <input id="email" formControlName="email" type="email" style="width:100%;padding:.5rem" />
+          <div *ngIf="emailTouched && emailInvalid" style="color:#b00020;font-size:.9rem">Enter valid email</div>
+        </div>
+
+        <div style="margin-bottom:.75rem">
+          <label for="password" style="display:block;font-weight:600">Password</label>
+          <input id="password" formControlName="password" type="password" style="width:100%;padding:.5rem" />
+          <div *ngIf="passwordTouched && passwordInvalid" style="color:#b00020;font-size:.9rem">Password required</div>
+        </div>
+
+        <div *ngIf="error()" style="color:#b00020;margin-bottom:.5rem">{{ error() }}</div>
+
+        <button type="submit" [disabled]="loading()" style="width:100%;padding:.6rem">
+          <span *ngIf="!loading()">Login</span>
+          <span *ngIf="loading()">Logging in…</span>
+        </button>
+      </form>
+    </section>
