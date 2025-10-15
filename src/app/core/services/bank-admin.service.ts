@@ -2,7 +2,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Organization, OrganizationStatus, Page } from '../model/model';
+import { DocumentStatus, Organization, OrganizationStatus, Page ,OrganizationDocument} from '../model/model';
+import { NotificationStatus, Notification as ApiNotification } from '../model/model';
 import { environment } from '../../../environments/environment';
 
 // NOTE: Replace with your actual API base URL
@@ -37,7 +38,40 @@ export class BankAdminService {
     status: OrganizationStatus, 
     note: string
   ): Observable<void> {
-    return this.http.patch<void>(`${API_BASE_URL}/organizations/${id}/status`, { status, note });
+    return this.http.put<void>(`${API_BASE_URL}/organizations/${id}/status`, { status, note });
+  }
+
+  getDocumentsForOrganization(organizationId: number): Observable<OrganizationDocument[]> {
+    return this.http.get<OrganizationDocument[]>(`${API_BASE_URL}/organizations/${organizationId}/documents`);
+  }
+
+  updateDocumentStatus(documentId: number, status: DocumentStatus, note: string): Observable<void> {
+    return this.http.put<void>(`${API_BASE_URL}/organizations/document/${documentId}`, { status, note });
+  }
+
+  // === Notification Management ===
+
+  getNotifications(page: number, size: number): Observable<Page<ApiNotification>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<Page<ApiNotification>>(`${API_BASE_URL}/notifications`, { params });
+  }
+
+  markNotificationAsRead(id: number): Observable<void> {
+    return this.http.put<void>(`${API_BASE_URL}/notifications/${id}/read`, {});
+  }
+
+  deleteNotification(id: number): Observable<void> {
+    return this.http.delete<void>(`${API_BASE_URL}/notifications/${id}`);
+  }
+
+  markAllNotificationsAsRead(): Observable<void> {
+    return this.http.put<void>(`${API_BASE_URL}/notifications/read`, {});
+  }
+
+  deleteAllReadNotifications(): Observable<void> {
+    return this.http.delete<void>(`${API_BASE_URL}/notifications/read`);
   }
 
   // === Password Management ===

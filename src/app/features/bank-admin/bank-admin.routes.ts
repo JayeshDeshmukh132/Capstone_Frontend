@@ -15,10 +15,14 @@ export const BANK_ADMIN_ROUTES: Routes = [
         path: 'organizations/:id',
         loadComponent: () => import('./pages/organization-detail/organization-detail'),
       },
-    //   {
-    //     path: 'notifications',
-    //     loadComponent: () => import('./pages/notifications/notifications.component'),
-    //   },
+      {
+        path: 'organizations/:id/documents', // The 'id' is the organizationId
+        loadComponent: () => import('./pages/organization-documents/organization-documents'),
+      },
+      {
+        path: 'notifications',
+        loadComponent: () => import('./pages/notifications/notifications'),
+      },
     //   {
     //     path: 'settings',
     //     loadComponent: () => import('./pages/settings/settings.component'),

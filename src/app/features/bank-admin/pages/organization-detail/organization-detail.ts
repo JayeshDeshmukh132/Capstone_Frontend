@@ -1,127 +1,46 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  signal,
+  AfterViewInit,
+  ElementRef,
+  viewChild
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import * as bootstrap from 'bootstrap';
 
-// Material UI Modules
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatChipsModule } from '@angular/material/chips';
+
+// Custom Application Imports
 import { BankAdminService } from '../../../../core/services/bank-admin.service';
 import { Organization, OrganizationStatus } from '../../../../core/model/model';
-import { UpdateStatusDialog } from '../update-status-dialog/update-status-dialog';
 
-// Custom Imports
 @Component({
   selector: 'app-organization-detail',
   standalone: true,
   imports: [
     CommonModule,
     RouterLink,
-    MatCardModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
-    MatListModule,
-    MatChipsModule,
+    ReactiveFormsModule
   ],
-  template: `
-    <div class="detail-container">
-      <a mat-stroked-button routerLink="/bank-admin/organizations">
-        <mat-icon>arrow_back</mat-icon>
-        Back to List
-      </a>
-
-      @switch (state().status) {
-        @case ('loading') {
-          <div class="centered-content">
-            <mat-spinner diameter="50"></mat-spinner>
-          </div>
-        }
-        @case ('error') {
-          <div class="centered-content error-message">
-            <h2>Error</h2>
-            <p>{{ state().error }}</p>
-          </div>
-        }
-        @case ('loaded') {
-          @if (state().organization; as org) {
-            <mat-card class="detail-card">
-              <mat-card-header>
-                <mat-card-title>{{ org.name }}</mat-card-title>
-                <mat-card-subtitle>{{ org.email }}</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <mat-list role="list">
-                  <mat-list-item role="listitem">
-                    <span matListItemTitle>Status</span>
-                    <span matListItemLine>
-                      <mat-chip [color]="getStatusColor(org.status)" selected>{{ org.status }}</mat-chip>
-                    </span>
-                  </mat-list-item>
-                  <mat-list-item role="listitem">
-                    <span matListItemTitle>Registration No.</span>
-                    <span matListItemLine>{{ org.registrationNo || 'Not provided' }}</span>
-                  </mat-list-item>
-                  <mat-list-item role="listitem">
-                    <span matListItemTitle>Address</span>
-                    <span matListItemLine>{{ org.address || 'Not provided' }}</span>
-                  </mat-list-item>
-                   <mat-list-item role="listitem">
-                    <span matListItemTitle>Verification Documents</span>
-                    <span matListItemLine>
-                      <a [href]="org.verificationDocsUrl" target="_blank" rel="noopener noreferrer">
-                        View Documents
-                      </a>
-                    </span>
-                  </mat-list-item>
-                   <mat-list-item role="listitem">
-                    <span matListItemTitle>Bank Admin Note</span>
-                    <span matListItemLine>{{ org.note || 'No notes yet' }}</span>
-                  </mat-list-item>
-                </mat-list>
-              </mat-card-content>
-              @if (org.status === 'PENDING') {
-                <mat-card-actions align="end">
-                  <button mat-flat-button color="warn" (click)="openUpdateStatusDialog(OrganizationStatus.REJECTED)">
-                    Reject
-                  </button>
-                  <button mat-flat-button color="primary" (click)="openUpdateStatusDialog(OrganizationStatus.APPROVED)">
-                    Approve
-                  </button>
-                </mat-card-actions>
-              }
-            </mat-card>
-          }
-        }
-      }
-    </div>
-  `,
-  styles: [`
-    .detail-container { padding: 2rem; }
-    .detail-card { margin-top: 1rem; }
-    .centered-content { display: grid; place-content: center; padding: 2rem; text-align: center; }
-    .error-message { color: red; }
-    a[mat-stroked-button] { margin-bottom: 1rem; }
-  `],
+  templateUrl: './organization-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class OrganizationDetailComponent {
-  // 1. Get the organization ID from the route parameters
+export default class OrganizationDetailComponent implements AfterViewInit {
+  // ## Injected Services
+  private readonly bankAdminService = inject(BankAdminService);
+  private readonly fb = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+
+
+  // ## Route Input
   id = input.required<string>();
 
-  // 2. Inject dependencies
-  private readonly bankAdminService = inject(BankAdminService);
-   private route = inject(ActivatedRoute);
-  private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
-
-  // 3. Define component state with signals
-  readonly OrganizationStatus = OrganizationStatus; // Make enum available in template
+  // ## Component State for Page Data
   readonly state = signal<{
     organization: Organization | null;
     status: 'loading' | 'loaded' | 'error';
@@ -132,62 +51,118 @@ export default class OrganizationDetailComponent {
     error: null,
   });
 
-   constructor() {
-    // This effect is correctly written. It will run when 'id' is populated.
+  // ## State for the Update Modal
+  readonly selectedOrgForUpdate = signal<Organization | null>(null);
+  readonly newStatusForUpdate = signal<OrganizationStatus | null>(null);
+
+  // ## Form for the Update Modal
+  readonly updateForm = this.fb.group({
+    note: ['']
+  });
+
+  // ## Template Element Reference for Bootstrap JS
+  private updateModalElement = viewChild.required<ElementRef<HTMLDivElement>>('updateStatusModal');
+  private updateModal?: bootstrap.Modal;
+
+  readonly toastMessage = signal('');
+  readonly toastIsError = signal(false);
+
+  private notificationToastElement = viewChild.required<ElementRef<HTMLDivElement>>('notificationToast');
+  private notificationToast?: bootstrap.Toast;
+
+  // Make enum available in the template
+  readonly OrganizationStatus = OrganizationStatus;
+
+  // ## Lifecycle Hooks
+  constructor() {
+    // Reactively fetch data when the route ID changes
     effect(() => {
-      const orgId = this.route.snapshot.paramMap.get('id');
-      if (orgId) {
-        this.fetchOrganization(orgId);
-      }
+    const orgId = this.route.snapshot.paramMap.get('id'); // Get the ID from the signal
+    
+    // ✅ Only fetch data if the ID has a valid value
+    if (orgId) {
+      this.fetchOrganization(orgId);
+    }
     });
   }
 
+  ngAfterViewInit(): void {
+    // Initialize both the modal and the toast
+    this.updateModal = new bootstrap.Modal(this.updateModalElement().nativeElement);
+    this.notificationToast = new bootstrap.Toast(this.notificationToastElement().nativeElement);
+  }
+
+  // ## Data Fetching
   fetchOrganization(id: string): void {
     this.state.set({ organization: null, status: 'loading', error: null });
-
-    // Perform the string-to-number conversion here
-    const numericId = Number(id);
-
-    this.bankAdminService.getOrganizationById(numericId).subscribe({
+    this.bankAdminService.getOrganizationById(Number(id)).subscribe({
       next: (org) => {
         this.state.set({ organization: org, status: 'loaded', error: null });
       },
-      error: (err) => {
+      error: () => {
         this.state.set({ organization: null, status: 'error', error: 'Failed to load organization details.' });
       },
     });
   }
 
-  openUpdateStatusDialog(newStatus: OrganizationStatus): void {
-    const organization = this.state().organization;
-    if (!organization) return;
+  // ## Event Handlers
+  // ✅ FIX: The method now accepts the 'org' object as a parameter.
+  openUpdateStatusDialog(org: Organization, newStatus: OrganizationStatus): void {
+    this.selectedOrgForUpdate.set(org);
+    this.newStatusForUpdate.set(newStatus);
 
-    // Use the consistently named dialog component
-    const dialogRef = this.dialog.open(UpdateStatusDialog, {
-      width: '400px',
-      data: {
-        organizationId: organization.id,
-        organizationName: organization.name,
-        newStatus: newStatus
+    // Configure form validators based on the action
+    this.updateForm.reset({ note: org.note || '' }); // Pre-fill with existing note
+    if (newStatus === OrganizationStatus.REJECTED) {
+      this.updateForm.controls.note.setValidators(Validators.required);
+    } else {
+      this.updateForm.controls.note.clearValidators();
+    }
+    this.updateForm.controls.note.updateValueAndValidity();
+
+    this.updateModal?.show();
+  }
+
+  submitUpdate(): void {
+    const org = this.selectedOrgForUpdate();
+    const status = this.newStatusForUpdate();
+
+    if (this.updateForm.invalid || !org || !status) {
+      this.updateForm.markAllAsTouched();
+      return;
+    }
+    
+    const note = this.updateForm.value.note ?? '';
+
+    this.bankAdminService.updateOrganizationStatus(Number(org.id), status, note).subscribe({
+      next: () => {
+        this.updateModal?.hide();
+        this.fetchOrganization(String(org.id)); // Refresh data
+        this.showToast('Organization status updated successfully!');
       },
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result?.success) {
-        this.snackBar.open('Organization status updated successfully!', 'Close', { duration: 3000 });
-        // Refresh data using the valid string ID from the input
-        this.fetchOrganization(this.id());
-      }
+      // ✅ MODIFY THIS ERROR BLOCK
+      error: (err) => {
+        this.updateModal?.hide(); // Still hide the modal on error
+        // Extract the specific message from the API response
+        const errorMessage = err.error?.message || 'An unexpected error occurred.';
+        this.showToast(errorMessage, true); // Show the error toast
+      },
     });
   }
 
-  getStatusColor(status: OrganizationStatus): 'primary' | 'warn' | undefined {
-    // ... (this method is correct)
+  // ## Helper Functions
+  getStatusBadgeClass(status: OrganizationStatus): string {
     switch (status) {
-      case OrganizationStatus.APPROVED: return 'primary';
-      case OrganizationStatus.REJECTED: return 'warn';
-      default: return undefined;
+      case OrganizationStatus.APPROVED: return 'bg-success';
+      case OrganizationStatus.REJECTED: return 'bg-danger';
+      case OrganizationStatus.PENDING: return 'bg-warning text-dark';
+      default: return 'bg-secondary';
     }
+  }
+
+  private showToast(message: string, isError: boolean = false): void {
+    this.toastMessage.set(message);
+    this.toastIsError.set(isError);
+    this.notificationToast?.show();
   }
 }

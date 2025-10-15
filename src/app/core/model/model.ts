@@ -32,6 +32,12 @@ export enum NotificationStatus {
   UNREAD = 'UNREAD',
 }
 
+export enum DocumentStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
 // Main Interfaces
 export interface Organization {
   id: number;
@@ -64,4 +70,15 @@ export interface Notification {
   message: string;
   status: NotificationStatus;
   createdAt: string;
+}
+
+export interface OrganizationDocument {
+  id: number;
+  organizationId: number;
+  storedPath: string;
+  displayName: string;
+  originalFilename: string;
+  uploadedAt: string;
+  note: string;
+  status: DocumentStatus;
 }
