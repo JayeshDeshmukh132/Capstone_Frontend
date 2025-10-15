@@ -1,20 +1,28 @@
-import { Component, inject } from '@angular/core';
+// src/app/features/employee/employee-layout.component.ts
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-employee',
-  imports: [CommonModule, RouterModule],
+  selector: 'app-employee-layout',
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './employee.html',
-  styleUrl: './employee.css',
+  styles: `
+    :host { display: block; height: 100vh; }
+    .sidebar { width: 260px; flex-shrink: 0; }
+    .main-content { overflow-y: auto; }
+    .content-wrapper { background-color: #f8f9fa; flex-grow: 1; }
+    .nav-link.active { font-weight: 500; }
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Employee {
-  private auth = inject(AuthService);
-  private router = inject(Router);
+export default class EmployeeLayoutComponent {
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   logout(): void {
-    this.auth.logout();
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }
