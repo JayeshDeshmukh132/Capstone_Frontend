@@ -1,131 +1,85 @@
-<section class="card-soft">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="h5-strong mb-0">Update Employee Details</h5>
-    <a routerLink="/org/employees" class="btn btn-outline-secondary btn-sm">Back to List</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="h3">Update Employee Details</h2>
+    <p class="text-muted mb-0">Modify the details for the selected employee.</p>
+  </div>
+  <a routerLink="/org/employees" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Back to List
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div *ngIf="loading()" class="card-body text-center p-5">
+    <div class="spinner-border" role="status"></div>
   </div>
 
-  <!-- Alert Popup -->
-  <div *ngIf="alert()" [class]="'alert-popup ' + alert()!.type" role="alert">
-    <div class="alert-popup-content">
-      <div class="alert-message">{{ alert()!.message }}</div>
-    </div>
-    <button type="button" class="btn-close" (click)="hideAlert()" aria-label="Close"></button>
-  </div>
-
-  <!-- Loading State -->
-  <div *ngIf="loading()" class="text-center my-5">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-2">Loading employee data...</p>
-  </div>
-
-  <!-- Form -->
   <form *ngIf="!loading()" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label for="employeeId" class="form-label fw-semibold">Employee ID</label>
-        <input type="text" id="employeeId" class="form-control" formControlName="employeeId" />
-        <div
-          *ngIf="form.controls.employeeId.touched && form.controls.employeeId.hasError('required')"
-          class="text-danger small mt-1"
-        >
-          Employee ID is required.
-        </div>
+    <div class="card-body">
+      <div *ngIf="alert()" [class]="'alert ' + alert()!.type" role="alert">
+        {{ alert()!.message }}
+        <button type="button" class="btn-close" (click)="hideAlert()" aria-label="Close"></button>
       </div>
-
       
-      <div class="col-md-6 mb-3">
-        <label for="email" class="form-label fw-semibold">Email Address</label>
-        <input type="email" id="email" class="form-control" formControlName="email" />
-        <div
-          *ngIf="form.controls.email.touched && form.controls.email.hasError('required')"
-          class="text-danger small mt-1"
-        >
-          Email is required.
+      <!-- Form fields are identical to create-employee, so we'll just show the form structure -->
+      <h5 class="card-title">Personal Details</h5>
+      <hr>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="employeeId" class="form-label">Employee ID</label>
+          <input type="text" id="employeeId" class="form-control" formControlName="employeeId" />
+          <!-- Validation messages -->
         </div>
-        <div
-          *ngIf="form.controls.email.touched && form.controls.email.hasError('email')"
-          class="text-danger small mt-1"
-        >
-          Please enter a valid email address.
+        <div class="col-md-6 mb-3">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" class="form-control" formControlName="email" />
+          <!-- Validation messages -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="firstName" class="form-label">First Name</label>
+          <input type="text" id="firstName" class="form-control" formControlName="firstName" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="lastName" class="form-label">Last Name</label>
+          <input type="text" id="lastName" class="form-control" formControlName="lastName" />
+        </div>
+      </div>
+      
+      <h5 class="card-title mt-4">Job & Bank Details</h5>
+      <hr>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="designation" class="form-label">Designation</label>
+          <input type="text" id="designation" class="form-control" formControlName="designation" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="department" class="form-label">Department</label>
+          <input type="text" id="department" class="form-control" formControlName="department" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="accountNumber" class="form-label">Bank Account Number</label>
+          <input type="text" id="accountNumber" class="form-control" formControlName="accountNumber" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="ifscCode" class="form-label">IFSC Code</label>
+          <input type="text" id="ifscCode" class="form-control text-uppercase" formControlName="ifscCode" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="joiningDate" class="form-label">Joining Date</label>
+          <input type="date" id="joiningDate" class="form-control" formControlName="joiningDate" />
         </div>
       </div>
     </div>
-
-   
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label for="firstName" class="form-label fw-semibold">First Name</label>
-        <input
-          type="text"
-          id="firstName"
-          class="form-control"
-          formControlName="firstName"
-          required
-        />
-      </div>
-      <div class="col-md-6 mb-3">
-        <label for="lastName" class="form-label fw-semibold">Last Name</label>
-        <input type="text" id="lastName" class="form-control" formControlName="lastName" required />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label for="designation" class="form-label fw-semibold">Designation</label>
-        <input
-          type="text"
-          id="designation"
-          class="form-control"
-          formControlName="designation"
-          required
-        />
-      </div>
-      <div class="col-md-6 mb-3">
-        <label for="department" class="form-label fw-semibold">Department</label>
-        <input
-          type="text"
-          id="department"
-          class="form-control"
-          formControlName="department"
-          required
-        />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label for="accountNumber" class="form-label fw-semibold">Bank Account Number</label>
-        <input
-          type="text"
-          id="accountNumber"
-          class="form-control"
-          formControlName="accountNumber"
-          required
-        />
-      </div>
-      <div class="col-md-6 mb-3">
-        <label for="ifscCode" class="form-label fw-semibold">IFSC Code</label>
-        <input type="text" id="ifscCode" class="form-control" formControlName="ifscCode" required />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label for="joiningDate" class="form-label fw-semibold">Joining Date</label>
-        <input
-          type="date"
-          id="joiningDate"
-          class="form-control"
-          formControlName="joiningDate"
-          required
-        />
-      </div>
-    </div>
-
-    <div class="form-actions mt-3">
-      <button type="submit" class="btn btn-soft-primary" [disabled]="saving()">
+    <div class="card-footer text-end">
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+        <span *ngIf="saving()" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
         {{ saving() ? 'Saving Changes...' : 'Save Changes' }}
       </button>
     </div>
   </form>
-</section>
+</div>

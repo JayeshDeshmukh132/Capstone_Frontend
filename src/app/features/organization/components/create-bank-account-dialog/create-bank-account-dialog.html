@@ -1,85 +1,79 @@
 <div class="dialog-backdrop" (click)="close(false)">
-  <div class="dialog-container card-soft" (click)="$event.stopPropagation()">
+  <div class="dialog-container" (click)="$event.stopPropagation()">
     <div class="dialog-header">
-      <h5 class="h5-strong mb-0">Add New Bank Account</h5>
+      <h5 class="h5">Add New Bank Account</h5>
       <button type="button" class="btn-close" (click)="close(false)" aria-label="Close"></button>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="dialog-body">
-        <!-- Form Fields -->
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="accountNo" class="form-label fw-semibold">Account Number</label>
+            <label for="accountNo" class="form-label">Account Number</label>
             <input type="text" id="accountNo" class="form-control" formControlName="accountNo" />
-            <!-- Validation messages -->
-            <div *ngIf="form.controls.accountNo.touched && form.controls.accountNo.hasError('required')" class="text-danger small mt-1">
+            <div *ngIf="form.controls.accountNo.touched && form.controls.accountNo.hasError('required')" class="invalid-feedback d-block">
               Account number is required.
             </div>
-             <div *ngIf="form.controls.accountNo.touched && form.controls.accountNo.hasError('pattern')" class="text-danger small mt-1">
+            <div *ngIf="form.controls.accountNo.touched && form.controls.accountNo.hasError('pattern')" class="invalid-feedback d-block">
               Please enter a valid account number (9-18 digits).
             </div>
           </div>
           <div class="col-md-6 mb-3">
-            <label for="ifscCode" class="form-label fw-semibold">IFSC Code</label>
-            <input type="text" id="ifscCode" class="form-control" formControlName="ifscCode" style="text-transform: uppercase;"/>
-            <!-- Validation messages -->
-             <div *ngIf="form.controls.ifscCode.touched && form.controls.ifscCode.hasError('required')" class="text-danger small mt-1">
+            <label for="ifscCode" class="form-label">IFSC Code</label>
+            <input type="text" id="ifscCode" class="form-control text-uppercase" formControlName="ifscCode" />
+            <div *ngIf="form.controls.ifscCode.touched && form.controls.ifscCode.hasError('required')" class="invalid-feedback d-block">
               IFSC Code is required.
             </div>
-             <div *ngIf="form.controls.ifscCode.touched && form.controls.ifscCode.hasError('pattern')" class="text-danger small mt-1">
+            <div *ngIf="form.controls.ifscCode.touched && form.controls.ifscCode.hasError('pattern')" class="invalid-feedback d-block">
               Please enter a valid 11-character IFSC code.
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="branchName" class="form-label fw-semibold">Branch Name</label>
+            <label for="branchName" class="form-label">Branch Name</label>
             <input type="text" id="branchName" class="form-control" formControlName="branchName" />
-            <!-- Validation messages -->
-            <div *ngIf="form.controls.branchName.touched && form.controls.branchName.hasError('required')" class="text-danger small mt-1">
+            <div *ngIf="form.controls.branchName.touched && form.controls.branchName.hasError('required')" class="invalid-feedback d-block">
               Branch name is required.
             </div>
           </div>
-
           <div class="col-md-6 mb-3">
-            <label for="balance" class="form-label fw-semibold">Initial Balance</label>
+            <label for="balance" class="form-label">Initial Balance</label>
             <div class="input-group">
               <span class="input-group-text">₹</span>
               <input type="number" id="balance" class="form-control" formControlName="balance" />
             </div>
-            <!-- Validation messages -->
-            <div *ngIf="form.controls.balance.touched && form.controls.balance.hasError('required')" class="text-danger small mt-1">
+            <div *ngIf="form.controls.balance.touched && form.controls.balance.hasError('required')" class="invalid-feedback d-block">
               Initial balance is required.
             </div>
-            <div *ngIf="form.controls.balance.touched && form.controls.balance.hasError('min')" class="text-danger small mt-1">
+            <div *ngIf="form.controls.balance.touched && form.controls.balance.hasError('min')" class="invalid-feedback d-block">
               Balance cannot be negative.
             </div>
           </div>
-      
         </div>
 
         <hr class="my-3" />
-        <h6 class="h6-strong mb-3">Required Documents</h6>
-        
+        <h6 class="mb-3">Required Documents</h6>
+
         <div class="mb-3">
-          <label for="chequeFile" class="form-label fw-semibold">1. Cancelled Cheque</label>
+          <label for="chequeFile" class="form-label">1. Cancelled Cheque</label>
           <input type="file" id="chequeFile" class="form-control" (change)="onFileSelected($event, 'cheque')" accept="image/*,.pdf" />
-          <div *ngIf="chequeFile()" class="small-muted mt-1">Selected: {{ chequeFile()?.name }}</div>
-        </div>
-        
-        <div class="mb-3">
-          <label for="gstFile" class="form-label fw-semibold">2. GST Certificate</label>
-          <input type="file" id="gstFile" class="form-control" (change)="onFileSelected($event, 'gst')" accept="image/*,.pdf" />
-          <div *ngIf="gstFile()" class="small-muted mt-1">Selected: {{ gstFile()?.name }}</div>
+          <div *ngIf="chequeFile()" class="form-text mt-1">Selected: {{ chequeFile()?.name }}</div>
         </div>
 
-        <div *ngIf="errorMessage()" class="alert-soft-danger mt-3">{{ errorMessage() }}</div>
+        <div class="mb-3">
+          <label for="gstFile" class="form-label">2. GST Certificate</label>
+          <input type="file" id="gstFile" class="form-control" (change)="onFileSelected($event, 'gst')" accept="image/*,.pdf" />
+          <div *ngIf="gstFile()" class="form-text mt-1">Selected: {{ gstFile()?.name }}</div>
+        </div>
+
+        <div *ngIf="errorMessage()" class="alert alert-danger mt-3">{{ errorMessage() }}</div>
       </div>
 
       <div class="dialog-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="close(false)">Cancel</button>
-        <button type="submit" class="btn btn-soft-primary" [disabled]="status() === 'submitting'">
+        <button type="button" class="btn btn-secondary" (click)="close(false)">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="status() === 'submitting'">
+          <span *ngIf="status() === 'submitting'" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
           {{ status() === 'submitting' ? 'Submitting...' : 'Add Account' }}
         </button>
       </div>

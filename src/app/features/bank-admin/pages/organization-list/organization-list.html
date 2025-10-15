@@ -1,187 +1,187 @@
-<<<<<<< HEAD
-<div class="container">
-    <h1>Organizations</h1>
-    <button mat-flat-button color="primary" (click)="openCreateDialog()">
-        Create New Organization
+<div class="container-fluid">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <h1 class="h3 mb-0">Organizations</h1>
+    <button
+      #createOrgBtn
+      class="btn btn-primary d-flex align-items-center"
+      (click)="openCreateDialog()"
+    >
+      <i class="bi bi-plus-lg me-2"></i> Create New Organization
     </button>
+  </div>
 
-    @if (state().isLoading) {
-    <p>Loading organizations...</p>
-    } @else if (state().error) {
-    <p class="error-message">{{ state().error }}</p>
-    } @else if (state().page?.content) {
-    <mat-table [dataSource]="state().page!.content" class="mat-elevation-z8">
-        <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-            <mat-cell *matCellDef="let org">{{ org.name }}</mat-cell>
-        </ng-container>
+  @switch (state().status) { @case ('loading') {
+  <div class="d-flex justify-content-center p-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  } @case ('error') {
+  <div class="alert alert-danger" role="alert">
+    {{ state().error }}
+  </div>
+  } @case ('loaded') { @if (state().page?.content; as orgs) {
+  <div class="table-responsive card shadow-sm">
+    <table class="table table-hover align-middle bg-white mb-0">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (org of orgs; track org.id) {
+        <tr>
+          <td>{{ org.name }}</td>
+          <td>{{ org.email }}</td>
+          <td>
+            <span [class]="'badge ' + getStatusBadgeClass(org.status)">
+              {{ org.status }}
+            </span>
+          </td>
+          <td class="text-end">
+            <a
+              class="btn btn-sm btn-outline-primary"
+              [routerLink]="['/bank-admin/organizations', org.id]"
+            >
+              <i class="bi bi-eye me-1"></i>View Details
+            </a>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
-        <ng-container matColumnDef="email">
-            <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
-            <mat-cell *matCellDef="let org">{{ org.email }}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-            <mat-cell *matCellDef="let org" [class]="org.status | lowercase">
-                {{ org.status }}
-            </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-            <mat-cell *matCellDef="let org">
-                <a mat-button [routerLink]="['/bank-admin/organizations', org.id]">View Details</a>
-            </mat-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-
-    <mat-paginator [length]="state().page!.totalElements" [pageSize]="state().page!.size"
-        [pageIndex]="state().page!.number" [pageSizeOptions]="[5, 10, 20]" (page)="handlePageEvent($event)">
-    </mat-paginator>
-    }
-=======
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Organizations</h1>
-        <button #createOrgBtn class="btn btn-primary d-flex align-items-center" (click)="openCreateDialog()">
-            <i class="bi bi-plus-lg me-2"></i> Create New Organization
-        </button>
+  @if (state().page!.totalPages > 1) {
+  <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <label for="pageSizeSelect" class="form-label mb-0 text-muted small">Items per page:</label>
+      <select
+        id="pageSizeSelect"
+        class="form-select form-select-sm w-auto"
+        (change)="handlePageSizeChange($event)"
+      >
+        @for (size of [5, 10, 20]; track size) {
+        <option [value]="size" [selected]="size === pageSize()">
+          {{ size }}
+        </option>
+        }
+      </select>
     </div>
 
-    @switch (state().status) {
-    @case ('loading') {
-    <div class="d-flex justify-content-center p-5">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
+    <nav aria-label="Page navigation">
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="state().page!.first">
+          <a class="page-link" role="button" (click)="handlePageChange(state().page!.number - 1)"
+            >Previous</a
+          >
+        </li>
+        <li class="page-item disabled">
+          <span class="page-link">
+            Page {{ state().page!.number + 1 }} of {{ state().page!.totalPages }}
+          </span>
+        </li>
+        <li class="page-item" [class.disabled]="state().page!.last">
+          <a class="page-link" role="button" (click)="handlePageChange(state().page!.number + 1)"
+            >Next</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+  } } } }
+
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    #createOrgModal
+    tabindex="-1"
+    aria-labelledby="createOrgModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createOrgModalLabel">Create New Organization</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
-    </div>
-    }
-    @case ('error') {
-    <div class="alert alert-danger" role="alert">
-        {{ state().error }}
-    </div>
-    }
-    @case ('loaded') {
-    @if (state().page?.content; as orgs) {
-    <div class="table-responsive">
-        <table class="table table-hover align-middle bg-white shadow-sm rounded">
-            <thead class="table-light">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Status</th>
-                    <th scope="col" class="text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (org of orgs; track org.id) {
-                <tr>
-                    <td>{{ org.name }}</td>
-                    <td>{{ org.email }}</td>
-                    <td>
-                        <span [class]="'badge ' + getStatusBadgeClass(org.status)">
-                            {{ org.status }}
-                        </span>
-                    </td>
-                    <td class="text-end">
-                        <a class="btn btn-sm btn-outline-primary" [routerLink]="['/bank-admin/organizations', org.id]">
-                            View Details
-                        </a>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    @if (state().page!.totalPages > 0) {
-    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-        <label for="pageSizeSelect" class="form-label mb-0">Items per page:
-            <select id="pageSizeSelect" class="form-select w-auto" (change)="handlePageSizeChange($event)">
-                @for (size of [5, 10, 20]; track size) {
-                <option [value]="size" [selected]="size === pageSize()">
-                    {{ size }}
-                </option>
-                }
-            </select>
-        </label>
-
-        <nav aria-label="Page navigation">
-            <ul class="pagination mb-0">
-                <li class="page-item" [class.disabled]="state().page!.first">
-                    <a class="page-link" role="button" (click)="handlePageChange(state().page!.number - 1)">Previous</a>
-                </li>
-                <li class="page-item disabled">
-                    <span class="page-link">
-                        Page {{ state().page!.number + 1 }} of {{ state().page!.totalPages }}
-                    </span>
-                </li>
-                <li class="page-item" [class.disabled]="state().page!.last">
-                    <a class="page-link" role="button" (click)="handlePageChange(state().page!.number + 1)">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    }
-    }
-    }}
-
-    <div class="modal fade" #createOrgModal tabindex="-1" aria-labelledby="createOrgModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createOrgModalLabel">Create New Organization</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" [formGroup]="form">
-                    <div class="mb-3">
-                        <label for="orgName" class="form-label">Organization Name</label>
-                        <input type="text" id="orgName" class="form-control" formControlName="name"
-                            [class.is-invalid]="form.controls.name.invalid && form.controls.name.touched">
-                        @if(form.controls.name.hasError('required') && form.controls.name.touched) {
-                        <div class="invalid-feedback">Name is required.</div>
-                        }
-                    </div>
-                    <div class="mb-3">
-                        <label for="orgEmail" class="form-label">Organization Email</label>
-                        <input type="email" id="orgEmail" class="form-control" formControlName="email"
-                            [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched">
-                        @if(form.controls.email.hasError('required') && form.controls.email.touched) {
-                        <div class="invalid-feedback">Email is required.</div>
-                        }
-                        @if(form.controls.email.hasError('email') && form.controls.email.touched) {
-                        <div class="invalid-feedback">Please enter a valid email.</div>
-                        }
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" [disabled]="form.invalid"
-                        (click)="createOrganization()">Create</button>
-                </div>
-            </div>
+        <div class="modal-body" [formGroup]="form">
+          <div class="mb-3">
+            <label for="orgName" class="form-label">Organization Name</label>
+            <input
+              type="text"
+              id="orgName"
+              class="form-control"
+              formControlName="name"
+              [class.is-invalid]="form.controls.name.invalid && form.controls.name.touched"
+            />
+            @if(form.controls.name.hasError('required') && form.controls.name.touched) {
+            <div class="invalid-feedback">Name is required.</div>
+            }
+          </div>
+          <div class="mb-3">
+            <label for="orgEmail" class="form-label">Organization Email</label>
+            <input
+              type="email"
+              id="orgEmail"
+              class="form-control"
+              formControlName="email"
+              [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched"
+            />
+            @if(form.controls.email.hasError('required') && form.controls.email.touched) {
+            <div class="invalid-feedback">Email is required.</div>
+            } @if(form.controls.email.hasError('email') && form.controls.email.touched) {
+            <div class="invalid-feedback">Please enter a valid email.</div>
+            }
+          </div>
         </div>
-    </div>
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div #notificationToast class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header" [class.bg-success]="!toastIsError()" [class.bg-danger]="toastIsError()"
-                [class.text-white]="true">
-                <strong class="me-auto">
-                    @if(toastIsError()) { <i class="bi bi-exclamation-circle-fill"></i> Error }
-                    @else { <i class="bi bi-check-circle-fill"></i> Success }
-                </strong>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                {{ toastMessage() }}
-            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="form.invalid"
+            (click)="createOrganization()"
+          >
+            Create
+          </button>
         </div>
+      </div>
     </div>
->>>>>>> bfe16112ad3d0f1056fa86ed2757c60fe77dfb19
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div #notificationToast class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div
+        class="toast-header"
+        [class.bg-success]="!toastIsError()"
+        [class.bg-danger]="toastIsError()"
+        [class.text-white]="true"
+      >
+        <strong class="me-auto">
+          @if(toastIsError()) {
+          <i class="bi bi-exclamation-circle-fill me-2"></i> Error } @else {
+          <i class="bi bi-check-circle-fill me-2"></i> Success }
+        </strong>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="toast-body">
+        {{ toastMessage() }}
+      </div>
+    </div>
+  </div>
 </div>

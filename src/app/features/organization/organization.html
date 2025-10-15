@@ -1,37 +1,42 @@
-<div class="org-layout">
-  <!-- Simple Sidebar Navigation -->
-  <aside class="org-sidebar">
-    <h4 class="sidebar-title">Organization Portal</h4>
-    <nav class="org-nav">
-      <a routerLink="dashboard" routerLinkActive="active-link" class="nav-link">
-        <!-- Add an icon if you like -->
-        <span>Dashboard</span>
-      </a>
-      <a routerLink="employees/new" routerLinkActive="active-link" class="nav-link">
-        <span>Add Employee</span>
-      </a>
-      <!-- Add more links here for Employees List, etc. -->
-      <a routerLink="employees" routerLinkActive="active-link" class="nav-link">
-        <span>Employees</span>
-      </a>
-      <a routerLink="bank-accounts" routerLinkActive="active-link" class="nav-link"
-        ><span>Bank Accounts</span>
-      </a>
-      <a routerLink="clients-vendors" routerLinkActive="active-link" class="nav-link">
-        <span>Clients & Vendors</span>
-      </a>
-      <a routerLink="payment-requests" routerLinkActive="active-link" class="nav-link">
-        <span>Payment Requests</span>
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <button (click)="logout()" class="btn btn-outline-danger w-100">Logout</button>
-    </div>
-  </aside>
+<div class="d-flex flex-column vh-100">
+  
+  <!-- 1. Top Navbar (flex-shrink-0 prevents it from shrinking if content grows) -->
+  <app-org-navbar class="flex-shrink-0"></app-org-navbar>
 
-  <!-- Main Content Area -->
-  <main class="org-content">
-    <!-- The content of child routes (dashboard, create-employee) will be rendered here -->
-    <router-outlet></router-outlet>
-  </main>
+  <!-- 
+    2. Main Layout Container 
+    - d-flex: Makes this a flex container for the sidebar and content.
+    - flex-grow-1: This is the key. It makes this div expand to fill all remaining vertical space.
+    - overflow-hidden: Prevents this container from creating a scrollbar.
+  -->
+  <div class="d-flex flex-grow-1 overflow-hidden">
+    
+    <!-- 3. Sidebar (fixed width, hidden on smaller screens) -->
+    <app-org-sidebar class="d-none d-lg-flex flex-shrink-0"></app-org-sidebar>
+
+    <!-- 
+      4. Main Content Area 
+      - flex-grow-1: Makes the content area take all remaining horizontal space.
+      - overflow-y-auto: Allows THIS area to scroll if its content is too long.
+      - p-3 p-lg-4: Responsive padding.
+    -->
+    <main class="flex-grow-1 overflow-y-auto p-3 p-lg-4">
+      
+      <!-- Global Error Alert -->
+      <div *ngIf="error()" class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error() }}
+      </div>
+
+      <!-- While Organization data is loading -->
+      <div *ngIf="loading()" class="d-flex justify-content-center align-items-center h-100">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Render child routes here -->
+      <router-outlet *ngIf="!loading() && !error()"></router-outlet>
+
+    </main>
+  </div>
 </div>

@@ -1,0 +1,5 @@
+/* Styling is handled by global dialog classes in styles.css */
+
+.status-pending { background-color: var(--bs-warning); color: var(--bs-dark); }
+.status-approved { background-color: var(--bs-success); color: var(--bs-light); }
+.status-rejected { background-color: var(--bs-danger); color: var(--bs-light); }

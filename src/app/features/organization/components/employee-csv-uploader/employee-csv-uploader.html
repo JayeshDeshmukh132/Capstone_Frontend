@@ -1,74 +1,106 @@
-<div class="dialog-container card-soft">
-  <!-- Header -->
+<div class="dialog-container card shadow-sm">
   <div class="dialog-header">
-    <h6 class="h6-strong mb-0">CSV Upload Utility</h6>
+    <h6 class="h5 mb-0">CSV Upload Utility</h6>
   </div>
 
-  <!-- Body -->
   <div class="dialog-body">
     <!-- Idle State -->
     <div *ngIf="status() === 'idle'">
-      <p>Upload a CSV file with new employee details. The file must follow a specific format.</p>
-      <div class="alert-soft-primary mb-3">
+      <p class="text-muted">
+        Upload a CSV file with new employee details. The file must follow a specific format.
+      </p>
+      <div class="alert alert-primary mb-3">
         <strong>Step 1:</strong>
-        <a href="javascript:void(0)" (click)="downloadFormat()" class="alert-link">Download the required CSV format</a> to ensure your data is structured correctly.
+        <a href="javascript:void(0)" (click)="downloadFormat()" class="alert-link"
+          >Download the required CSV format</a
+        >
+        to ensure your data is structured correctly.
       </div>
       <div class="mb-3">
-        <strong>Step 2:</strong> Choose your CSV file.
-        <input type="file" class="form-control mt-2" (change)="onFileSelected($event)" accept=".csv" />
-        <div *ngIf="selectedFile()" class="small-muted mt-1">Selected: {{ selectedFile()?.name }}</div>
+        <label for="employeeCsvFile" class="form-label fw-semibold"
+          >Step 2: Choose your CSV file</label
+        >
+        <input
+          type="file"
+          id="employeeCsvFile"
+          class="form-control"
+          (change)="onFileSelected($event)"
+          accept=".csv"
+        />
+        <div *ngIf="selectedFile()" class="form-text mt-1">
+          Selected: {{ selectedFile()?.name }}
+        </div>
       </div>
-      <div *ngIf="errorMessage()" class="alert-soft-danger mt-3">{{ errorMessage() }}</div>
+      <div *ngIf="errorMessage()" class="alert alert-danger mt-3">{{ errorMessage() }}</div>
     </div>
 
     <!-- Uploading/Polling State -->
     <div *ngIf="status() === 'uploading' || status() === 'polling'" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
       <p class="mt-3">
-        {{ status() === 'uploading' ? 'Starting job...' : 'Processing file, this may take a moment. Please wait...' }}
+        {{
+          status() === 'uploading'
+            ? 'Starting job...'
+            : 'Processing file, this may take a moment. Please wait...'
+        }}
       </p>
-      <p class="small-muted" *ngIf="status() === 'polling'">Checking job status periodically.</p>
+      <p class="text-muted small" *ngIf="status() === 'polling'">
+        Checking job status periodically.
+      </p>
     </div>
 
-     <!-- Result State (Updated) -->
+    <!-- Result State -->
     <div *ngIf="status() === 'result' && uploadResult() as result">
-      <h6 class="h6-strong">Processing Complete (Status: {{ result.status }})</h6>
-      <p>The server has processed your file with the following results:</p>
+      <h6 class="h5">Processing Complete (Status: {{ result.status }})</h6>
+      <p class="text-muted">The server has processed your file with the following results:</p>
       <div class="result-summary">
         <div><strong>Total Records in File:</strong> {{ result.totalRecordsProcessed }}</div>
-        <div class="text-success"><strong>Successfully Added:</strong> {{ result.successfulRecords }}</div>
-        <div [class.text-danger]="result.failedRecords > 0"><strong>Failed to Add:</strong> {{ result.failedRecords }}</div>
+        <div class="text-success">
+          <strong>Successfully Added:</strong> {{ result.successfulRecords }}
+        </div>
+        <div [class.text-danger]="result.failedRecords > 0">
+          <strong>Failed to Add:</strong> {{ result.failedRecords }}
+        </div>
       </div>
-      
+
       <div *ngIf="result.failedRecordDetails && result.failedRecordDetails.length > 0" class="mt-3">
-        <h6 class="h6-strong text-danger">Processing Errors</h6>
-        <p class="small-muted">The following records could not be processed:</p>
+        <h6 class="h6 text-danger">Processing Errors</h6>
+        <p class="small text-muted">The following records could not be processed:</p>
         <ul class="error-list">
           <li *ngFor="let error of result.failedRecordDetails">
-            <!-- Display line number if available -->
             <strong *ngIf="error.lineNumber > 0">Line {{ error.lineNumber }}:</strong>
             <strong *ngIf="error.lineNumber === 0">Record:</strong>
-            <span>{{ error.firstName }} {{ error.lastName }} ({{ error.email }}) - <strong>Reason:</strong> {{ error.reason }}</span>
+            <span
+              >{{ error.firstName }} {{ error.lastName }} ({{ error.email }}) -
+              <strong>Reason:</strong> {{ error.reason }}</span
+            >
           </li>
         </ul>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="dialog-footer">
-    <!-- Idle State Footer -->
     <div *ngIf="status() === 'idle'">
-      <button type="button" class="btn btn-outline-secondary" (click)="close(false)">Cancel</button>
-      <button type="button" class="btn btn-soft-primary" [disabled]="!selectedFile()" (click)="startUploadProcess()">
+      <button type="button" class="btn btn-secondary" (click)="close(false)">Cancel</button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!selectedFile()"
+        (click)="startUploadProcess()"
+      >
         Upload and Process
       </button>
     </div>
-
     <div *ngIf="status() === 'result' && uploadResult() as result">
-      <button type="button" class="btn btn-outline-secondary" (click)="uploadAnother()">Upload Another File</button>
-      <!-- Now we can safely access 'result.successfulRecords' without the compiler complaining -->
-      <button type="button" class="btn btn-soft-primary" (click)="close(result.successfulRecords > 0)">Done</button>
+      <button type="button" class="btn btn-secondary" (click)="uploadAnother()">
+        Upload Another File
+      </button>
+      <button type="button" class="btn btn-primary" (click)="close(result.successfulRecords > 0)">
+        Done
+      </button>
     </div>
   </div>
 </div>

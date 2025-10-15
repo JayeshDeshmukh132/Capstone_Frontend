@@ -1,27 +1,16 @@
 .list-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
-
-.table {
-  vertical-align: middle;
-}
-
-.badge {
-  font-size: 0.8rem;
-  padding: 0.4em 0.7em;
-  font-weight: 600;
-}
-
-/* Status colors for badges */
-.status-pending { background-color: #ffc107; color: black; }
-.status-approved { background-color: #198554; color: white; }
-.status-rejected { background-color: #dc3545; color: white; }
-.status-processed { background-color: #0d6efd; color: white; }
-/* Add any other statuses your backend might return */
-
 .nav-tabs .nav-link {
   cursor: pointer;
 }
+
+/* Status colors for badges */
+.status-pending { background-color: var(--bs-warning); color: var(--bs-dark); }
+.status-approved { background-color: var(--bs-success); color: var(--bs-light); }
+.status-rejected { background-color: var(--bs-danger); color: var(--bs-light); }
