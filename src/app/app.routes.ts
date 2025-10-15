@@ -8,6 +8,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login').then((m) => m.default),
   },
   {
+    path: 'maintanence',
+    loadComponent: () => import('./features/maintanence/maintanence').then((m) => m.default),
+  },
+  {
     path: 'org',
     loadChildren: () => import('./features/organization/organization.routes').then(m => m.organizationRoutes)
   },
@@ -24,5 +28,5 @@ export const routes: Routes = [
   canActivate: [authGuard], // Protect this route
 },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'maintanence' },
 ];

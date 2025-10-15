@@ -1,0 +1,222 @@
+/* src/app/shared/under-construction/under-construction.component.css */
+:host {
+  display: block; /* Ensure the component takes up space */
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Prevent scrollbars */
+}
+
+.under-construction-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Gradient background */
+  color: #fff;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: background-animate 15s ease infinite alternate; /* Subtle background animation */
+}
+
+@keyframes background-animate {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.content {
+  max-width: 600px;
+  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 25px;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+h1 {
+  font-size: 3.5em; /* Larger heading */
+  margin-bottom: 15px;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tagline {
+  font-size: 1.3em;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.time-segment {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 15px 20px;
+  border-radius: 10px;
+  min-width: 80px;
+  animation: segment-appear 0.5s ease-out forwards;
+}
+
+.time-segment:nth-child(1) { animation-delay: 0.1s; }
+.time-segment:nth-child(3) { animation-delay: 0.2s; }
+.time-segment:nth-child(5) { animation-delay: 0.3s; }
+.time-segment:nth-child(7) { animation-delay: 0.4s; }
+
+@keyframes segment-appear {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.countdown .value {
+  display: block;
+  font-size: 2.8em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.countdown .label {
+  display: block;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.countdown .separator {
+  font-size: 3em;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.progress-section {
+  margin-top: 30px;
+}
+
+.progress-section p {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 15px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 75%; /* Adjust this value for current progress */
+  height: 100%;
+  background-color: #28a745; /* Bootstrap success green */
+  border-radius: 10px;
+  animation: progress-fill 2s ease-out forwards;
+  transition: width 0.5s ease-in-out; /* Smooth width changes */
+}
+
+@keyframes progress-fill {
+  from { width: 0%; }
+  to { width: 75%; } /* Match the initial width */
+}
+
+.social-links {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.social-links p {
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.social-icon {
+  color: #fff;
+  font-size: 2em;
+  margin: 0 15px;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icon:hover {
+  color: #a7d9ff; /* Lighter shade on hover */
+  transform: translateY(-5px);
+}
+
+.contact-info {
+  font-size: 1em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.contact-info a {
+  color: #fff;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+  color: #a7d9ff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5em;
+  }
+  .tagline {
+    font-size: 1.1em;
+  }
+  .countdown .value {
+    font-size: 2em;
+  }
+  .countdown .label {
+    font-size: 0.8em;
+  }
+  .time-segment {
+    padding: 10px 15px;
+    min-width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 25px;
+  }
+  h1 {
+    font-size: 2em;
+  }
+  .countdown {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .countdown .separator {
+    display: none; /* Hide separators on small screens if they wrap */
+  }
+  .social-icon {
+    font-size: 1.8em;
+    margin: 0 10px;
+  }
+}
