@@ -167,3 +167,37 @@ export interface DepositRequest {
   proofDocUrl: string;
   createdAt: string;
 }
+
+// For the salary history list
+export interface SalaryHistoryItem {
+  id: number;
+  month: number;
+  year: number;
+  grossAmount: number;
+  netAmount: number;
+}
+
+// For the detailed salary slip view
+export interface SalarySlipDetail {
+  id: number;
+  employeeFirstName: string;
+  employeeLastName: string;
+  employeeDesignation: string;
+  ifscCode: string;
+  bankAccountNo: string;
+  department: string;
+  employeeCode: string;
+  organizationName: string;
+  basic: number;
+  da: number;
+  grossAmount: number;
+  hra: number;
+  netAmount: number;
+  otherAllowances: number;
+  pf: number;
+  reimbursements: number;
+  tds: number;
+  month: number;
+  year: number;
+  ptax: number;
+}

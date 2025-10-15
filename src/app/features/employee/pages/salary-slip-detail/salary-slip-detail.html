@@ -1,0 +1,63 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <button class="btn btn-outline-secondary d-flex align-items-center" (click)="goBack()">
+      <i class="bi bi-arrow-left me-2"></i> Back to Salary History
+    </button>
+    @if (state().status === 'loaded') {
+      <button class="btn btn-primary d-flex align-items-center" (click)="downloadSlip()">
+        <i class="bi bi-download me-2"></i> Download PDF
+      </button>
+    }
+  </div>
+
+  @switch (state().status) {
+    @case ('loading') { /* Spinner */ }
+    @case ('error') { /* Error Alert */ }
+    @case ('loaded') {
+      @if (state().slip; as slip) {
+        <div class="card shadow-sm">
+          <div class="card-header text-center bg-light">
+            <h3>Salary Slip</h3>
+            <p class="lead mb-0">For {{ slip.month }}/{{ slip.year }}</p>
+          </div>
+          <div class="card-body">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <h5>{{ slip.employeeFirstName }} {{ slip.employeeLastName }}</h5>
+                <p class="mb-0 text-muted">{{ slip.employeeDesignation }} ({{ slip.employeeCode }})</p>
+                <p class="mb-0 text-muted">{{ slip.department }} Department</p>
+              </div>
+              <div class="col-md-6 text-md-end">
+                <h5>{{ slip.organizationName }}</h5>
+                <p class="mb-0 text-muted">A/C: {{ slip.bankAccountNo }}</p>
+                <p class="mb-0 text-muted">IFSC: {{ slip.ifscCode }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <h5 class="mb-3">Earnings</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between"><span>Basic</span> <span>{{ slip.basic | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span>HRA</span> <span>{{ slip.hra | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span>DA</span> <span>{{ slip.da | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span>Other Allowances</span> <span>{{ slip.otherAllowances | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span>Reimbursements</span> <span>{{ slip.reimbursements | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between fw-bold"><strong>Gross Amount</strong> <strong>{{ slip.grossAmount | currency:'INR' }}</strong></li>
+                </ul>
+              </div>
+              <div class="col-md-6 mt-4 mt-md-0">
+                <h5 class="mb-3">Deductions</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between"><span>PF</span> <span>{{ slip.pf | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span>TDS</span> <span>{{ slip.tds | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between"><span>Professional Tax (PTAX)</span> <span>{{ slip.ptax | currency:'INR' }}</span></li>
+                  <li class="list-group-item d-flex justify-content-between fw-bold"><strong>Net Amount</strong> <strong>{{ slip.netAmount | currency:'INR' }}</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { parseJwt } from '../utils/jwt.helper';
+import { jwtDecode } from 'jwt-decode';
 
 type LoginResponse = {
   token?: string;
@@ -136,4 +137,5 @@ export class AuthService {
     const normalized = match.toUpperCase();
     return this.rolesSignal().some(r => String(r).toUpperCase().includes(normalized));
   }
+
 }

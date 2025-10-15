@@ -19,11 +19,10 @@ export const routes: Routes = [
       canActivate: [authGuard],
   },
   {
-    path: 'employee',
-    loadComponent: () => import('./features/employee/employee').then((m) => m.Employee),
-     canActivate: [authGuard],
-    data: { roles: ['ROLE_EMPLOYEE'] },
-  },
+  path: 'employee',
+  loadChildren: () => import('./features/employee/employee.routes').then(m => m.EMPLOYEE_ROUTES),
+  canActivate: [authGuard], // Protect this route
+},
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];
