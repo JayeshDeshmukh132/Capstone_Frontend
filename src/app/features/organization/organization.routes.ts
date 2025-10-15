@@ -1,20 +1,27 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guards/auth.guards'; // adjust path if your guard is elsewhere
+import { Organization } from './organization';
 
 
 export const organizationRoutes: Routes = [
   {
     path: '',
+    component: Organization,
     canActivate: [authGuard],
     data: { roles: ['ROLE_ORGANIZATION'] },
     children: [
       {
+        // Redirect the base '/org' path to a default page, like the employee list
         path: '',
-        loadComponent: () =>
-          import('./organization').then(m => m.Organization), // dashboard or main org landing page
+        redirectTo: 'employees',
+        pathMatch: 'full'
       },
       {
-        path: 'employees/new', 
+        path: 'employees',
+        loadComponent: () => import('./pages/employee-list/employee-list').then(m => m.EmployeeList),
+      },
+      {
+        path: 'employees/new',
         loadComponent: () => import('./pages/create-employee/create-employee').then(m => m.CreateEmployee),
       },
       {

@@ -1,93 +1,81 @@
-<section class="card-soft">
- <div class="list-header">
-    <div>
-      <h5 class="h5-strong">Employee Management</h5>
-      <p class="small-muted">View, search, and manage your organization's employees.</p>
+<div class="list-header">
+  <div>
+    <h2 class="h3">Employee Management</h2>
+    <p class="text-muted mb-0">View, search, and manage your organization's employees.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a routerLink="/org/employees/upload" class="btn btn-secondary">
+      <i class="bi bi-upload me-1"></i>Upload CSV
+    </a>
+    <a routerLink="/org/employees/new" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Add Employee
+    </a>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="mb-3" style="max-width: 300px;">
+      <input type="text" class="form-control" placeholder="Search by Employee ID..." [formControl]="searchControl" />
     </div>
-    <div class="d-flex gap-2">
-      <!-- UPDATE THIS BUTTON to use routerLink -->
-      <a routerLink="/org/employees/upload" class="btn btn-outline-secondary">Upload CSV</a>
-      <a routerLink="/org/employees/new" class="btn btn-soft-primary">Add Employee</a>
+
+    <div *ngIf="loading()" class="text-center my-5">
+      <div class="spinner-border" role="status"></div>
+    </div>
+
+    <div *ngIf="error()" class="alert alert-danger my-3">{{ error() }}</div>
+
+    <div *ngIf="!loading() && !error() && page() as employeePage" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of employeePage.content">
+            <td>{{ emp.employeeId }}</td>
+            <td>{{ emp.firstName }} {{ emp.lastName }}</td>
+            <td>{{ emp.email }}</td>
+            <td>{{ emp.department }}</td>
+            <td>
+              <span class="badge" [ngClass]="emp.status === 'ACTIVE' ? 'bg-success' : 'bg-secondary'">
+                {{ emp.status | titlecase }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <a [routerLink]="['/org/employees', emp.employeeId, 'edit']" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+              <button class="btn btn-sm" [ngClass]="emp.status === 'ACTIVE' ? 'btn-outline-danger' : 'btn-outline-success'" (click)="toggleEmployeeStatus(emp)" [title]="emp.status === 'ACTIVE' ? 'Deactivate' : 'Activate'">
+                <i class="bi" [ngClass]="emp.status === 'ACTIVE' ? 'bi-toggle-off' : 'bi-toggle-on'"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="employeePage.content.length === 0">
+            <td colspan="6" class="text-center text-muted py-4">No employees found.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <nav *ngIf="employeePage.totalPages > 1" class="d-flex justify-content-end mt-3">
+        <ul class="pagination pagination-sm">
+          <li class="page-item" [class.disabled]="employeePage.first">
+            <button class="page-link" (click)="handlePageChange(employeePage.number - 1)">Previous</button>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Page {{ employeePage.number + 1 }} of {{ employeePage.totalPages }}</span>
+          </li>
+          <li class="page-item" [class.disabled]="employeePage.last">
+            <button class="page-link" (click)="handlePageChange(employeePage.number + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
-
-  <!-- Search Filter -->
-  <div class="mb-3" style="max-width: 300px;">
-    <input 
-      type="text" 
-      class="form-control" 
-      placeholder="Search by Employee ID..."
-      [formControl]="searchControl"
-    />
-  </div>
-
-  <!-- Loading State -->
-  <div *ngIf="loading()" class="text-center my-5">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-2">Loading employees...</p>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error()" class="alert-soft-danger my-3">{{ error() }}</div>
-
-  <!-- Data Table -->
-  <div *ngIf="!loading() && !error() && page() as employeePage">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Employee ID</th>
-          <th>Full Name</th>
-          <th>Email</th>
-          <th>Department</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-     <tbody>
-  <tr *ngFor="let emp of employeePage.content">
-    <td>{{ emp.employeeId }}</td>
-    <td>{{ emp.firstName }} {{ emp.lastName }}</td>
-    <td>{{ emp.email }}</td>
-    <td>{{ emp.department }}</td>
-    <td>
-      <span class="badge" [ngClass]="emp.status === 'ACTIVE' ? 'bg-success' : 'bg-secondary'">
-        {{ emp.status | titlecase }}
-      </span>
-    </td>
-    <td class="actions-cell"> <!-- Use a class for easier styling -->
-      <!-- Edit Button (existing) -->
-      <a [routerLink]="['/org/employees', emp.employeeId, 'edit']" class="btn btn-sm btn-outline-primary">
-        Edit
-      </a>
-
-      <!-- START: ADD THIS STATUS TOGGLE BUTTON -->
-      <button 
-        class="btn btn-sm" 
-        [ngClass]="emp.status === 'ACTIVE' ? 'btn-outline-danger' : 'btn-outline-success'"
-        (click)="toggleEmployeeStatus(emp)">
-        {{ emp.status === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
-      </button>
-      <!-- END: STATUS TOGGLE BUTTON -->
-    </td>
-  </tr>
-      </tbody>
-    </table>
-
-    <!-- Simple Custom Pagination -->
-    <nav *ngIf="employeePage.totalPages > 1" class="d-flex justify-content-end">
-      <ul class="pagination">
-        <li class="page-item" [class.disabled]="employeePage.first">
-          <button class="page-link" (click)="handlePageChange(employeePage.number - 1)">Previous</button>
-        </li>
-        <li class="page-item active">
-          <span class="page-link">{{ employeePage.number + 1 }} of {{ employeePage.totalPages }}</span>
-        </li>
-        <li class="page-item" [class.disabled]="employeePage.last">
-          <button class="page-link" (click)="handlePageChange(employeePage.number + 1)">Next</button>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</section>
+</div>

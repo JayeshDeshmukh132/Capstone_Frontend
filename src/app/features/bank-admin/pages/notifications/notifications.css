@@ -1,0 +1,6 @@
+.list-group-item.read {
+  background-color: #f8f9fa; /* Light grey for read notifications */
+}
+.toast-container {
+  z-index: 1090; /* Ensure toast appears above other content */
+}

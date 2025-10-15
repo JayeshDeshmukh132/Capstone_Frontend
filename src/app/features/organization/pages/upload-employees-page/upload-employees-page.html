@@ -1,12 +1,12 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
-    <h5 class="h5-strong">Add Employees via CSV</h5>
-    <p class="small-muted mb-0">Use the utility below to perform a bulk import of new employees.</p>
+    <h2 class="h3">Add Employees via CSV</h2>
+    <p class="text-muted mb-0">Use the utility below to perform a bulk import of new employees.</p>
   </div>
-  <a routerLink="/org/employees" class="btn btn-outline-secondary btn-sm">Back to List</a>
+  <a routerLink="/org/employees" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Back to List
+  </a>
 </div>
 
 <!-- Embed the uploader component directly into the page -->
-<app-employee-csv-uploader 
-  (closed)="handleUploadCompletion($event)">
-</app-employee-csv-uploader>
+<app-employee-csv-uploader (closed)="handleUploadCompletion($event)"></app-employee-csv-uploader>

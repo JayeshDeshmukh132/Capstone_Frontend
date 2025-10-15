@@ -1,12 +1,54 @@
-.document-link {
-  display: inline-flex;
+.list-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.account-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.account-card {
+  display: block;
   text-decoration: none;
-  color: var(--bs-primary, #0d6efd);
+  color: inherit;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  padding: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  background-color: var(--bs-body-bg);
 }
-.document-link:hover {
-  text-decoration: underline;
+
+.account-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
-.list-group-item strong {
-  min-width: 150px; /* Aligns the text nicely */
+
+.account-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+}
+
+.account-number {
+  font-weight: 600;
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+.balance-label {
+  font-size: 0.9rem;
+  color: var(--bs-secondary-color);
+}
+.balance-amount {
+  font-size: 1.75rem;
+  font-weight: 500;
 }

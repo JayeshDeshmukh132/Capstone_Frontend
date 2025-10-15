@@ -1,90 +1,121 @@
-<section class="card-soft">
-  <div class="list-header">
-    <div>
-      <h5 class="h5-strong">Payment Requests</h5>
-      <p class="small-muted">Create and track all deposit, salary, and vendor payment requests.</p>
-    </div>
-   <div class="dropdown">
-  <button class="btn btn-soft-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Create New Request
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li><a class="dropdown-item" routerLink="new-deposit">Deposit Request</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" routerLink="new-vendor">Vendor Payment</a></li>
-  <li><a class="dropdown-item" routerLink="new-salary">Process Salaries (CSV)</a></li>
-  </ul>
+<div class="list-header">
+  <div>
+    <h2 class="h3">Payment Requests</h2>
+    <p class="text-muted mb-0">
+      Create and track all deposit, salary, and vendor payment requests.
+    </p>
+  </div>
+  <div class="dropdown">
+    <button
+      class="btn btn-primary dropdown-toggle"
+      type="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <i class="bi bi-plus-lg me-1"></i>Create New Request
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" routerLink="new-deposit">Deposit Request</a></li>
+      <li><a class="dropdown-item" routerLink="new-vendor">Vendor Payment</a></li>
+      <li><hr class="dropdown-divider" /></li>
+      <li><a class="dropdown-item" routerLink="new-salary">Process Salaries (CSV)</a></li>
+    </ul>
+  </div>
 </div>
+
+<div class="card shadow-sm">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [class.active]="activeTab() === PaymentType.DEPOSIT"
+          (click)="setActiveTab(PaymentType.DEPOSIT)"
+          >Deposits</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [class.active]="activeTab() === PaymentType.SALARY"
+          (click)="setActiveTab(PaymentType.SALARY)"
+          >Salary</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [class.active]="activeTab() === PaymentType.VENDOR"
+          (click)="setActiveTab(PaymentType.VENDOR)"
+          >Vendor</a
+        >
+      </li>
+    </ul>
   </div>
+  <div class="card-body">
+    <div *ngIf="loading()" class="text-center my-5">
+      <div class="spinner-border" role="status"></div>
+    </div>
+    <div *ngIf="error()" class="alert alert-danger my-3">{{ error() }}</div>
 
-  <!-- Tab Navigation -->
-  <ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="activeTab() === PaymentType.DEPOSIT" (click)="setActiveTab(PaymentType.DEPOSIT)">Deposits</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="activeTab() === PaymentType.SALARY" (click)="setActiveTab(PaymentType.SALARY)">Salary</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [class.active]="activeTab() === PaymentType.VENDOR" (click)="setActiveTab(PaymentType.VENDOR)">Vendor</a>
-    </li>
-  </ul>
+    <div *ngIf="!loading() && !error() && page() as dataPage" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date Created</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let req of dataPage.content"
+            (click)="viewDetails(req.id)"
+            class="clickable-row"
+          >
+            <td>#{{ req.id }}</td>
+            <td>{{ req.amount | currency : 'INR' }}</td>
+            <td>
+              <span class="badge" [ngClass]="'status-' + req.status.toLowerCase()">{{
+                req.status | titlecase
+              }}</span>
+            </td>
+            <td>{{ req.createdAt | date : 'short' }}</td>
+            <td>{{ req.paymentType | titlecase }}</td>
+          </tr>
+          <tr *ngIf="dataPage.empty">
+            <td colspan="5" class="text-center text-muted py-4">
+              No {{ activeTab() | lowercase }} requests found.
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- Loading / Error States -->
-  <div *ngIf="loading()" class="text-center my-5">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+      <nav *ngIf="dataPage.totalPages > 1" class="d-flex justify-content-end mt-3">
+        <ul class="pagination pagination-sm">
+          <li class="page-item" [class.disabled]="dataPage.first">
+            <button class="page-link" (click)="handlePageChange(dataPage.number - 1)">
+              Previous
+            </button>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link"
+              >Page {{ dataPage.number + 1 }} of {{ dataPage.totalPages }}</span
+            >
+          </li>
+          <li class="page-item" [class.disabled]="dataPage.last">
+            <button class="page-link" (click)="handlePageChange(dataPage.number + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
-  <div *ngIf="error()" class="alert-soft-danger my-3">{{ error() }}</div>
-
-  <!-- Data Table -->
-  <div *ngIf="!loading() && !error() && page() as dataPage">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Request ID</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Date Created</th>
-          <th>Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let req of dataPage.content" (click)="viewDetails(req.id)" class="clickable-row">
-          <td>#{{ req.id }}</td>
-          <td>{{ req.amount | currency:'INR' }}</td>
-          <td>
-            <span class="badge" [ngClass]="'status-' + req.status.toLowerCase()">{{ req.status | titlecase }}</span>
-          </td>
-          <td>{{ req.createdAt | date:'short' }}</td>
-          <td>{{ req.paymentType | titlecase }}</td>
-        </tr>
-        <tr *ngIf="dataPage.empty">
-          <td colspan="5" class="text-center text-muted py-4">No {{ activeTab() | lowercase }} requests found.</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Pagination -->
-    <nav *ngIf="dataPage.totalPages > 1" class="d-flex justify-content-end">
-      <ul class="pagination">
-        <li class="page-item" [class.disabled]="dataPage.first">
-          <button class="page-link" (click)="handlePageChange(dataPage.number - 1)">Previous</button>
-        </li>
-        <li class="page-item active">
-          <span class="page-link">{{ dataPage.number + 1 }} of {{ dataPage.totalPages }}</span>
-        </li>
-        <li class="page-item" [class.disabled]="dataPage.last">
-          <button class="page-link" (click)="handlePageChange(dataPage.number + 1)">Next</button>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</section>
+</div>
 
 <app-payment-request-detail-dialog
   *ngIf="selectedRequestId()"
   [requestId]="selectedRequestId()!"
-  (closed)="onDialogClosed()">
-</app-payment-request-detail-dialog>
+  (closed)="onDialogClosed()"
+></app-payment-request-detail-dialog>

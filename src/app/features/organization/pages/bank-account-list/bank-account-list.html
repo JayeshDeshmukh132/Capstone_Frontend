@@ -1,40 +1,61 @@
-<section class="card-soft">
-  <div class="list-header">
-    <div>
-      <h5 class="h5-strong">Bank Accounts</h5>
-      <p class="small-muted">Manage your organization's bank accounts.</p>
-    </div>
-    <button class="btn btn-soft-primary" (click)="isCreateDialogVisible.set(true)">
-      Add New Account
-    </button>
+<div class="list-header">
+  <div>
+    <h2 class="h3">Bank Accounts</h2>
+    <p class="text-muted mb-0">Manage your organization's bank accounts.</p>
   </div>
+  <button class="btn btn-primary" (click)="isCreateDialogVisible.set(true)">
+    <i class="bi bi-plus-lg me-1"></i> Add New Account
+  </button>
+</div>
 
-  <!-- Loading / Error States -->
-  <div *ngIf="loading()" class="text-center my-5">...Loading...</div>
-  <div *ngIf="error()" class="alert-soft-danger my-3">{{ error() }}</div>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <!-- Loading / Error States -->
+    <div *ngIf="loading()" class="text-center my-5">
+      <div class="spinner-border" role="status"></div>
+    </div>
+    <div *ngIf="error()" class="alert alert-danger my-3">{{ error() }}</div>
 
-  <!-- Accounts List -->
-  <div *ngIf="!loading() && !error()" class="account-list">
-    <a *ngFor="let acc of accounts()" [routerLink]="['/org/bank-accounts', acc.id]" class="account-card">
-      <div class="account-card-header">
-        <span class="account-number">...{{ acc.bankAccountNumber.slice(-4) }}</span>
-        <span class="badge" [ngClass]="'status-' + acc.bankStatus.toLowerCase()">
-          {{ acc.bankStatus | titlecase }}
-        </span>
+    <!-- Accounts List -->
+    <div *ngIf="!loading() && !error()" class="account-list">
+      <a
+        *ngFor="let acc of accounts()"
+        [routerLink]="['/org/bank-accounts', acc.id]"
+        class="account-card"
+      >
+        <div class="account-card-header">
+          <span class="account-number">...{{ acc.bankAccountNumber.slice(-4) }}</span>
+          <span
+            class="badge"
+            [ngClass]="{
+              'bg-success': acc.bankStatus === 'ACTIVE' || acc.bankStatus === 'APPROVED',
+              'bg-warning text-dark': acc.bankStatus === 'PENDING',
+              'bg-danger': acc.bankStatus === 'REJECTED',
+              'bg-secondary': acc.bankStatus === 'INACTIVE'
+            }"
+          >
+            {{ acc.bankStatus | titlecase }}
+          </span>
+        </div>
+        <div class="pt-3">
+          <div class="balance-label">Available Balance</div>
+          <div class="balance-amount">{{ acc.balance | currency : 'INR' }}</div>
+        </div>
+      </a>
+      <div
+        *ngIf="accounts().length === 0"
+        class="text-center text-muted py-5 w-100"
+        style="grid-column: 1 / -1"
+      >
+        <i class="bi bi-wallet2 fs-1"></i>
+        <p class="mt-2">No bank accounts have been added yet.</p>
       </div>
-      <div class="account-card-body">
-        <div class="balance-label">Available Balance</div>
-        <div class="balance-amount">{{ acc.balance | currency:'USD' }}</div>
-      </div>
-    </a>
-    <div *ngIf="accounts().length === 0" class="text-center text-muted py-5">
-      No bank accounts have been added yet.
     </div>
   </div>
-</section>
+</div>
 
 <!-- Dialog Component -->
-<app-create-bank-account-dialog 
+<app-create-bank-account-dialog
   *ngIf="isCreateDialogVisible()"
-  (closed)="onDialogClosed($event)">
-</app-create-bank-account-dialog>
+  (closed)="onDialogClosed($event)"
+></app-create-bank-account-dialog>

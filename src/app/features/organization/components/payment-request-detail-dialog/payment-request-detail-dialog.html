@@ -1,26 +1,27 @@
 <div class="dialog-backdrop" (click)="closeDialog()">
-  <div class="dialog-container card-soft" (click)="$event.stopPropagation()">
+  <div class="dialog-container" (click)="$event.stopPropagation()">
     <div class="dialog-header">
-      <h5 class="h5-strong mb-0">Payment Request Details</h5>
+      <h5 class="h5">Payment Request Details</h5>
       <button type="button" class="btn-close" (click)="closeDialog()" aria-label="Close"></button>
     </div>
 
     <div class="dialog-body">
-      <div *ngIf="loading()" class="text-center p-5">...Loading Details...</div>
-      <div *ngIf="error()" class="alert-soft-danger">{{ error() }}</div>
+      <div *ngIf="loading()" class="text-center p-5">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+      <div *ngIf="error()" class="alert alert-danger">{{ error() }}</div>
 
       <div *ngIf="details() as req">
-        <!-- Main Details -->
         <ul class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between">
             <strong>Request ID:</strong> <span>#{{ req.id }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
-            <strong>Amount:</strong> 
+            <strong>Amount:</strong>
             <span class="fw-bold fs-5">{{ req.amount | currency:'INR' }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
-            <strong>Status:</strong> 
+            <strong>Status:</strong>
             <span class="badge" [ngClass]="'status-' + req.status.toLowerCase()">{{ req.status | titlecase }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
@@ -29,24 +30,18 @@
           <li class="list-group-item d-flex justify-content-between">
             <strong>Date Created:</strong> <span>{{ req.createdAt | date:'medium' }}</span>
           </li>
-          <li class="list-group-item">
-            <strong>Description / Note:</strong>
-            <p class="mb-0 text-muted">{{ req.note || '-' }}</p>
-          </li>
         </ul>
 
         <hr class="my-3">
 
-        <!-- Associated Parties -->
-        <h6 class="h6-strong">Parties Involved</h6>
+        <h6 class="h6 mb-2">Parties Involved</h6>
         <ul class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between">
-            <strong>Organization:</strong> <span>{{ req.organizationName }} (ID: {{ req.organizationId }})</span>
+            <strong>Organization:</strong> <span>{{ req.organizationName }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
             <strong>Bank Account ID:</strong> <span>{{ req.bankAccountId }}</span>
           </li>
-          <!-- Conditionally show Client/Vendor ID if it exists -->
           <li *ngIf="req.clientVendorId" class="list-group-item d-flex justify-content-between">
             <strong>Client/Vendor ID:</strong> <span>{{ req.clientVendorId }}</span>
           </li>
@@ -54,16 +49,14 @@
 
         <hr class="my-3">
 
-        <!-- Approval & Attachments -->
-        <h6 class="h6-strong">Approval & Attachments</h6>
+        <h6 class="h6 mb-2">Details & Attachments</h6>
         <ul class="list-group list-group-flush">
-          <!-- Conditionally show the approver's name only if the request is approved/rejected -->
-          <li *ngIf="req.approvedByAdminName" class="list-group-item d-flex justify-content-between">
-            <strong>Processed By:</strong> <span>{{ req.approvedByAdminName }} (Admin ID: {{ req.approvedByAdminId }})</span>
+          <li class="list-group-item d-flex flex-column">
+            <strong>Description / Note:</strong>
+            <p class="mb-0 text-muted">{{ req.note || '-' }}</p>
           </li>
-          <!-- Show "Pending" if not yet processed -->
-          <li *ngIf="!req.approvedByAdminName" class="list-group-item d-flex justify-content-between">
-            <strong>Processed By:</strong> <span class="text-muted">Pending Review</span>
+          <li *ngIf="req.approvedByAdminName" class="list-group-item d-flex justify-content-between">
+            <strong>Processed By:</strong> <span>{{ req.approvedByAdminName }}</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
             <strong>Attachment:</strong>
@@ -71,12 +64,11 @@
             <ng-template #noAttachment><span class="text-muted">Not provided</span></ng-template>
           </li>
         </ul>
-
       </div>
     </div>
 
     <div class="dialog-footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="closeDialog()">Close</button>
+      <button type="button" class="btn btn-secondary" (click)="closeDialog()">Close</button>
     </div>
   </div>
 </div>
