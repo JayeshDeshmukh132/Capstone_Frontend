@@ -19,6 +19,7 @@ export const EMPLOYEE_ROUTES: Routes = [
         redirectTo: 'salaries',
         pathMatch: 'full',
       },
+      { path: '**', redirectTo: 'maintanence' },
     ],
   },
 ];
