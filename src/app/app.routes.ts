@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guards';
+import { authRedirectGuard } from './core/guards/auth-redirect.guards';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,7 @@ export const routes: Routes = [
     // Make sure this name matches the exported const in the routes file
     loadChildren: () =>
       import('./features/bank-admin/bank-admin.routes').then((m) => m.BANK_ADMIN_ROUTES),
+      canActivate: [authGuard],
   },
   {
     path: 'employee',

@@ -1,35 +1,40 @@
-<mat-sidenav-container class="layout-container">
-  <mat-sidenav mode="side" opened class="sidenav">
-    <div class="sidenav-header">
-      <h2>Bank Portal</h2>
+<div class="d-flex vh-100">
+
+  <div class="sidebar bg-light p-3 d-flex flex-column">
+    <div class="sidebar-header mb-4 text-center">
+      <h2 class="fs-4">Bank Portal</h2>
     </div>
-    <mat-nav-list>
-      <a mat-list-item routerLink="organizations" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>business</mat-icon>
-        <span matListItemTitle>Organizations</span>
-      </a>
-      <a mat-list-item routerLink="notifications" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>notifications</mat-icon>
-        <span matListItemTitle>Notifications</span>
-      </a>
-      <a mat-list-item routerLink="settings" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>settings</mat-icon>
-        <span matListItemTitle>Settings</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
+    <ul class="nav nav-pills flex-column">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="organizations" routerLinkActive="active">
+          <i class="bi bi-building me-2"></i> Organizations
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="notifications" routerLinkActive="active">
+          <i class="bi bi-bell me-2"></i> Notifications
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="settings" routerLinkActive="active">
+          <i class="bi bi-gear me-2"></i> Settings
+        </a>
+      </li>
+    </ul>
+  </div>
 
-  <mat-sidenav-content class="main-content">
-    <mat-toolbar color="primary">
-      <span>Bank Administrator Dashboard</span>
-      <span class="spacer"></span>
-      <button mat-icon-button aria-label="Logout" (click)="logout()">
-        <mat-icon>logout</mat-icon>
-      </button>
-    </mat-toolbar>
+  <div class="main-content flex-grow-1 d-flex flex-column">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+      <div class="container-fluid">
+        <span class="navbar-brand">Bank Administrator Dashboard</span>
+        <button class="btn btn-outline-light d-flex align-items-center" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-2"></i> Logout
+        </button>
+      </div>
+    </nav>
 
-    <main class="content-wrapper">
+    <main class="content-wrapper p-4">
       <router-outlet></router-outlet>
     </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </div>
+</div>

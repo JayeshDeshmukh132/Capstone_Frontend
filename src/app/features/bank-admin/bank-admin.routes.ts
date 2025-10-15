@@ -15,10 +15,34 @@ export const BANK_ADMIN_ROUTES: Routes = [
         path: 'organizations/:id',
         loadComponent: () => import('./pages/organization-detail/organization-detail'),
       },
+<<<<<<< HEAD
     //   {
     //     path: 'notifications',
     //     loadComponent: () => import('./pages/notifications/notifications.component'),
     //   },
+=======
+      {
+        path: 'organizations/:id/documents', // The 'id' is the organizationId
+        loadComponent: () => import('./pages/organization-documents/organization-documents'),
+      },
+
+      {
+        path: 'notifications',
+        loadComponent: () => import('./pages/notifications/notifications'),
+      },
+      {
+        path: 'organizations/:orgId/accounts',
+        loadComponent: () => import('./pages/bank-account-list/bank-account-list'),
+      },
+      {
+        path: 'organizations/:orgId/accounts/:accountId',
+        loadComponent: () => import('./pages/bank-account-detail/bank-account-detail'),
+      },
+      {
+        path: 'organizations/:orgId/requests',
+        loadComponent: () => import('./pages/pending-requests/pending-requests'),
+      },
+>>>>>>> bfe16112ad3d0f1056fa86ed2757c60fe77dfb19
     //   {
     //     path: 'settings',
     //     loadComponent: () => import('./pages/settings/settings.component'),

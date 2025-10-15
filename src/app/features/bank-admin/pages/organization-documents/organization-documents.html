@@ -1,0 +1,114 @@
+<div class="container py-4">
+  <button class="btn btn-outline-secondary d-inline-flex align-items-center mb-4" (click)="goBack()">
+    <i class="bi bi-arrow-left me-2"></i>
+    Back
+  </button>
+  <h2>Review Documents</h2>
+
+  @switch (state().status) {
+    @case ('loading') {
+      <div class="d-flex justify-content-center p-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    }
+    @case ('error') {
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error</h4>
+        <p>{{ state().error }}</p>
+      </div>
+    }
+    @case ('loaded') {
+      @if (state().documents; as docs) {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle bg-white shadow-sm rounded">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Document Name</th>
+                <th scope="col">Uploaded At</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (doc of docs; track doc.id) {
+                <tr>
+                  <td>{{ doc.displayName }}</td>
+                  <td>{{ doc.uploadedAt | date:'medium' }}</td>
+                  <td>
+                    <span [class]="'badge ' + getStatusBadgeClass(doc.status)">{{ doc.status }}</span>
+                  </td>
+                  <td class="text-center">
+                    <a class="btn btn-sm btn-outline-secondary me-2" [href]="doc.storedPath" target="_blank" title="View document">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    @if (doc.status === 'PENDING') {
+                      <button class="btn btn-sm btn-outline-danger me-2" (click)="openDialog(doc, DocumentStatus.REJECTED)" title="Reject">
+                        <i class="bi bi-hand-thumbs-down"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-success" (click)="openDialog(doc, DocumentStatus.APPROVED)" title="Approve">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="text-muted text-center mt-4">No documents have been uploaded for this organization.</p>
+      }
+    }
+  }
+
+  <div class="modal fade" #updateStatusModal tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateStatusModalLabel">Update Document Status</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" [formGroup]="updateForm">
+          @if (selectedDocument(); as doc) {
+            <p>
+              Set status for "<strong>{{ doc.displayName }}</strong>" to
+              <span [class]="'fw-bold ' + (newStatus() === 'REJECTED' ? 'text-danger' : 'text-success')">
+                {{ newStatus() | lowercase }}
+              </span>.
+            </p>
+          }
+          <div class="mb-3">
+            <label for="docNote" class="form-label">Note</label>
+            <textarea id="docNote" class="form-control" formControlName="note" rows="3" [class.is-invalid]="updateForm.controls.note.invalid && updateForm.controls.note.touched"></textarea>
+            @if (updateForm.controls.note.hasError('required') && updateForm.controls.note.touched) {
+              <div class="invalid-feedback">A note is required for rejection.</div>
+            }
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn" [class.btn-success]="newStatus() === 'APPROVED'" [class.btn-danger]="newStatus() === 'REJECTED'" [disabled]="updateForm.invalid" (click)="submitUpdate()">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div #notificationToast class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header" [class.bg-success]="!toastIsError()" [class.bg-danger]="toastIsError()" [class.text-white]="true">
+        <strong class="me-auto">
+          @if(toastIsError()) { <i class="bi bi-exclamation-circle-fill"></i> Error }
+          @else { <i class="bi bi-check-circle-fill"></i> Success }
+        </strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        {{ toastMessage() }}
+      </div>
+    </div>
+  </div>
+</div>
