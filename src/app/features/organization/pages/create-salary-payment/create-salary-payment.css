@@ -1,0 +1,17 @@
+.disabled-section {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.result-summary {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+.error-list {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 1rem 1rem 1rem 2rem;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.9rem;
+}

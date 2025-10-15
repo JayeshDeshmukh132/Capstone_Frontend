@@ -1,0 +1,12 @@
+.document-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--bs-primary, #0d6efd);
+}
+.document-link:hover {
+  text-decoration: underline;
+}
+.list-group-item strong {
+  min-width: 150px; /* Aligns the text nicely */
+}

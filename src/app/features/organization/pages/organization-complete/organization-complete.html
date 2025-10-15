@@ -1,0 +1,121 @@
+<section class="card-soft mx-auto" style="max-width: 700px">
+  <h5 class="h5-strong mb-3">Complete Organization Registration</h5>
+
+  <!-- Beautified Alert Popup -->
+  <div *ngIf="alert().visible" [class]="'alert-popup ' + alert().type" role="alert">
+    <div class="alert-popup-content">
+      <!-- Icon Slot -->
+      <div class="alert-icon">
+        <svg *ngIf="alert().type === 'alert-soft-success'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+        </svg>
+        <svg *ngIf="alert().type === 'alert-soft-danger' || alert().type === 'alert-soft-warning'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.964 0L.165 13.233c-.457.778.091 1.767.982 1.767h13.706c.89 0 1.438-.99.982-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1-2.002 0 1 1 0 0 1 2.002 0z"/>
+        </svg>
+      </div>
+      <!-- Message Slot -->
+      <div class="alert-message">{{ alert().message }}</div>
+    </div>
+    <button type="button" class="btn-close" (click)="hideAlert()" aria-label="Close"></button>
+  </div>
+
+
+  <div class="mb-3">
+    <p *ngIf="organization()" class="mb-1">
+      Welcome <strong>{{ organization()?.name }}</strong> — we need a few details to complete your registration.
+    </p>
+    <p *ngIf="organization()?.email" class="small-muted mb-0">
+      <strong>Email:</strong> {{ organization()?.email }}
+    </p>
+  </div>
+
+  <div *ngIf="loading()" class="d-flex justify-content-center my-3 spinner-wrap">
+    <div class="spinner-border" role="status" style="width: 36px; height: 36px">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="complete-form" novalidate>
+    <!-- Registration and Address fields... -->
+    <div class="mb-3">
+      <label for="registrationNo" class="form-label fw-semibold">Registration Number <span class="text-danger">*</span></label>
+      <input id="registrationNo" type="text" class="form-control" formControlName="registrationNo" />
+      <div *ngIf="form.controls.registrationNo.touched && form.controls.registrationNo.hasError('required')" class="text-danger small mt-1">
+        Registration number is required.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="address" class="form-label fw-semibold">Address <span class="text-danger">*</span></label>
+      <textarea id="address" rows="3" class="form-control" formControlName="address"></textarea>
+      <div *ngIf="form.controls.address.touched && form.controls.address.hasError('required')" class="text-danger small mt-1">
+        Address is required.
+      </div>
+    </div>
+
+    <hr/>
+    <p class="small-muted">Please upload the following required documents if they are not already present.</p>
+
+    <!-- General Form Error (for missing files) -->
+    <div *ngIf="error()" class="alert-soft-danger mb-3">
+        {{ error() }}
+    </div>
+
+    <!-- Display Specific Upload Errors -->
+    <div *ngIf="uploadErrors()" class="alert-soft-warning mb-3">
+        <div class="fw-semibold">Document Upload Issues:</div>
+        <ul>
+            <li *ngFor="let err of uploadErrors() | keyvalue">{{ err.value }}</li>
+        </ul>
+    </div>
+
+
+    <!-- File Uploads... -->
+    <div class="file-row">
+      <div>
+        <label class="form-label file-label">Incorporation Certificate <span class="text-danger">*</span></label>
+        <div *ngIf="!incDoc()">
+          <input type="file" class="form-control form-control-sm file-input" (change)="onIncorporationSelected($event)" accept=".pdf,.png,.jpg"/>
+          <div *ngIf="incorporationFile()" class="file-help">{{ incorporationFile()?.name }}</div>
+        </div>
+        <div *ngIf="incDoc()" class="file-help">
+          <a [href]="incDoc()?.storedPath" target="_blank" rel="noopener">{{ incDoc()?.displayName || incDoc()?.originalName }}</a>
+          <div class="small-muted">✓ Already uploaded</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label file-label">Tax Document <span class="text-danger">*</span></label>
+         <div *ngIf="!taxDoc()">
+          <input type="file" class="form-control form-control-sm file-input" (change)="onTaxSelected($event)" accept=".pdf,.png,.jpg"/>
+          <div *ngIf="taxFile()" class="file-help">{{ taxFile()?.name }}</div>
+        </div>
+        <div *ngIf="taxDoc()" class="file-help">
+          <a [href]="taxDoc()?.storedPath" target="_blank" rel="noopener">{{ taxDoc()?.displayName || taxDoc()?.originalName }}</a>
+          <div class="small-muted">✓ Already uploaded</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label file-label">Address Proof <span class="text-danger">*</span></label>
+         <div *ngIf="!addrDoc()">
+          <input type="file" class="form-control form-control-sm file-input" (change)="onAddressProofSelected($event)" accept=".pdf,.png,.jpg"/>
+          <div *ngIf="addressProofFile()" class="file-help">{{ addressProofFile()?.name }}</div>
+        </div>
+        <div *ngIf="addrDoc()" class="file-help">
+          <a [href]="addrDoc()?.storedPath" target="_blank" rel="noopener">{{ addrDoc()?.displayName || addrDoc()?.originalName }}</a>
+          <div class="small-muted">✓ Already uploaded</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-soft-primary" [disabled]="loading()">
+        {{ loading() ? 'Submitting...' : 'Submit for Review' }}
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="router.navigate(['/org'])">
+        Cancel
+      </button>
+    </div>
+  </form>
+</section>

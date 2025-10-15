@@ -54,61 +54,66 @@ export class AuthService {
       localStorage.setItem(this.tokenKey, token);
       this.tokenSignal.set(token);
 
-      // 1) Check explicit single-role field returned by your backend: res.role
+      // ---  STORE ORGANIZATION ID (if present) ---
+      // backend might return it directly, e.g., res.organizationId or res.id
+      const maybeOrgId = (res as any)?.organizationId ?? (res as any)?.id ?? null;
+      if (maybeOrgId) {
+        try { localStorage.setItem('org_id', String(maybeOrgId)); } catch { /* ignore */ }
+      }
+
+      // --- 1) Parse role from response ---
       let roles: string[] = [];
       const maybeSingleRole = (res as any)?.role as string | undefined;
       if (maybeSingleRole) {
-        // backend returns role without "ROLE_" prefix; normalize to full form
-        const normalized = maybeSingleRole.startsWith('ROLE_') ? maybeSingleRole : `ROLE_${maybeSingleRole}`;
+        const normalized = maybeSingleRole.startsWith('ROLE_')
+          ? maybeSingleRole
+          : `ROLE_${maybeSingleRole}`;
         roles = [normalized.toUpperCase()];
       }
 
-      // 2) Also check explicit 'roles' returned in response (could be array or string)
-      const maybeRoles = (res?.roles || (res?.data && (res.data as any).roles)) as string[] | string | undefined;
+      // --- 2) Parse roles array if available ---
+      const maybeRoles = (res?.roles || (res?.data && (res.data as any).roles)) as
+        | string[]
+        | string
+        | undefined;
       if ((!roles || roles.length === 0) && maybeRoles) {
-        roles = Array.isArray(maybeRoles) ? maybeRoles.map(String) : [String(maybeRoles)];
+        roles = Array.isArray(maybeRoles)
+          ? maybeRoles.map(String)
+          : [String(maybeRoles)];
       }
 
-      // 3) If still empty, decode JWT payload and try various claim shapes
+      // --- 3) If still empty, decode JWT payload and check for roles ---
       if (!roles || roles.length === 0) {
         const payload = parseJwt(token) as any | null;
         if (payload) {
-          // payload.roles could be:
-          // - array of strings: ["ROLE_X"]
-          // - array of objects: [{authority: 'ROLE_X'}] OR [{role: 'ROLE_X'}]
-          // - payload.authorities similar
           if (Array.isArray(payload.roles)) {
-            roles = payload.roles.map((r: any) => {
-              if (typeof r === 'string') return r;
-              if (r && typeof r === 'object') return String(r.authority ?? r.role ?? JSON.stringify(r));
-              return String(r);
-            });
+            roles = payload.roles.map((r: any) => (typeof r === 'string' ? r : r.authority ?? r.role));
           } else if (Array.isArray(payload.authorities)) {
-            roles = payload.authorities.map((r: any) => {
-              if (typeof r === 'string') return r;
-              if (r && typeof r === 'object') return String(r.authority ?? r.role ?? JSON.stringify(r));
-              return String(r);
-            });
-          } else if (payload.realm_access && Array.isArray(payload.realm_access.roles)) {
+            roles = payload.authorities.map((r: any) => (typeof r === 'string' ? r : r.authority ?? r.role));
+          } else if (payload.realm_access?.roles) {
             roles = payload.realm_access.roles.map(String);
+          }
+          // --- ✅ Also check if JWT payload contains orgId or organizationId ---
+          if (payload.organizationId || payload.orgId) {
+            try { localStorage.setItem('org_id', String(payload.organizationId ?? payload.orgId)); } catch {}
           }
         }
       }
 
-      // Normalize to uppercase and ensure "ROLE_" prefix where applicable
+      // --- normalize roles ---
       roles = roles
         .filter(Boolean)
         .map(r => String(r).toUpperCase())
         .map(r => (r.startsWith('ROLE_') ? r : `ROLE_${r}`));
 
-      // store roles
-      try { localStorage.setItem(this.rolesKey, JSON.stringify(roles)); } catch { /* ignore */ }
+      try { localStorage.setItem(this.rolesKey, JSON.stringify(roles)); } catch {}
       this.rolesSignal.set(roles);
 
       return { success: true, roles };
     })
   );
 }
+
 
 
   logout(): void {

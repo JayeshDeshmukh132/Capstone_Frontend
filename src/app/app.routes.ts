@@ -8,9 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'org',
-    loadComponent: () => import('./features/organization/organization').then((m) => m.Organization),
-    canActivate: [authGuard],
-    data: { roles: ['ROLE_ORGANIZATION'] },
+    loadChildren: () => import('./features/organization/organization.routes').then(m => m.organizationRoutes)
   },
   {
     path: 'bank-admin',

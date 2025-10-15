@@ -1,0 +1,76 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h5 class="h5-strong">New Deposit Request</h5>
+    <p class="small-muted mb-0">Select a source account and amount for your deposit.</p>
+  </div>
+  <a routerLink="/org/payment-requests" class="btn btn-outline-secondary btn-sm">Back to List</a>
+</div>
+
+<section class="card-soft">
+  <div *ngIf="status() === 'loading'" class="text-center p-5">...Loading Data...</div>
+
+  <form *ngIf="status() !== 'loading'" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="card-body">
+      <div *ngIf="successMessage()" class="alert-soft-success">{{ successMessage() }}</div>
+      <div *ngIf="errorMessage()" class="alert-soft-danger">{{ errorMessage() }}</div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="bankAccountId" class="form-label fw-semibold">From Bank Account</label>
+          <select id="bankAccountId" class="form-select" formControlName="bankAccountId">
+            <option [ngValue]="null" disabled>Select a source account...</option>
+            <option *ngFor="let acc of bankAccounts()" [ngValue]="acc.id">
+              {{ acc.bankAccountNumber}} (Balance: {{ acc.balance | currency:'INR' }})
+            </option>
+          </select>
+          <div *ngIf="bankAccounts().length === 0" class="small-muted mt-1">
+            No active bank accounts found. <a routerLink="/org/bank-accounts">Add one here</a>.
+          </div>
+          <!-- Validation Message -->
+          <div *ngIf="form.controls.bankAccountId.touched && form.controls.bankAccountId.hasError('required')" class="text-danger small mt-1">
+            Please select a bank account.
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="amount" class="form-label fw-semibold">Deposit Amount</label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="0.00" />
+          </div>
+          <!-- Validation Messages -->
+          <div *ngIf="form.controls.amount.touched && form.controls.amount.hasError('required')" class="text-danger small mt-1">
+            Amount is required.
+          </div>
+          <div *ngIf="form.controls.amount.touched && form.controls.amount.hasError('min')" class="text-danger small mt-1">
+            Amount must be a positive number.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label fw-semibold">Description / Memo</label>
+        <textarea id="description" class="form-control" formControlName="note" rows="3"></textarea>
+        <!-- Validation Messages -->
+        <div *ngIf="form.controls.note.touched && form.controls.note.hasError('required')" class="text-danger small mt-1">
+          A description is required.
+        </div>
+        <div *ngIf="form.controls.note.touched && form.controls.note.hasError('minlength')" class="text-danger small mt-1">
+          Description must be at least 5 characters long.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="file" class="form-label fw-semibold">Supporting Document</label>
+        <input type="file" id="file" class="form-control" (change)="onFileSelected($event)" />
+        <div *ngIf="selectedFile()" class="small-muted mt-1">Selected: {{ selectedFile()?.name }}</div>
+      </div>
+  
+      <div class="form-actions mt-3 d-flex justify-content-end">
+        <button type="submit" class="btn btn-soft-primary" [disabled]="status() === 'submitting'">
+          {{ status() === 'submitting' ? 'Submitting...' : 'Submit Deposit Request' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,40 @@
+<section class="card-soft">
+  <div class="list-header">
+    <div>
+      <h5 class="h5-strong">Bank Accounts</h5>
+      <p class="small-muted">Manage your organization's bank accounts.</p>
+    </div>
+    <button class="btn btn-soft-primary" (click)="isCreateDialogVisible.set(true)">
+      Add New Account
+    </button>
+  </div>
+
+  <!-- Loading / Error States -->
+  <div *ngIf="loading()" class="text-center my-5">...Loading...</div>
+  <div *ngIf="error()" class="alert-soft-danger my-3">{{ error() }}</div>
+
+  <!-- Accounts List -->
+  <div *ngIf="!loading() && !error()" class="account-list">
+    <a *ngFor="let acc of accounts()" [routerLink]="['/org/bank-accounts', acc.id]" class="account-card">
+      <div class="account-card-header">
+        <span class="account-number">...{{ acc.bankAccountNumber.slice(-4) }}</span>
+        <span class="badge" [ngClass]="'status-' + acc.bankStatus.toLowerCase()">
+          {{ acc.bankStatus | titlecase }}
+        </span>
+      </div>
+      <div class="account-card-body">
+        <div class="balance-label">Available Balance</div>
+        <div class="balance-amount">{{ acc.balance | currency:'USD' }}</div>
+      </div>
+    </a>
+    <div *ngIf="accounts().length === 0" class="text-center text-muted py-5">
+      No bank accounts have been added yet.
+    </div>
+  </div>
+</section>
+
+<!-- Dialog Component -->
+<app-create-bank-account-dialog 
+  *ngIf="isCreateDialogVisible()"
+  (closed)="onDialogClosed($event)">
+</app-create-bank-account-dialog>

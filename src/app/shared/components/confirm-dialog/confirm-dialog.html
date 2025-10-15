@@ -1,0 +1,28 @@
+<div class="dialog-backdrop" (click)="onCancel()">
+  <div class="dialog-container card-soft" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="dialog-header">
+      <h5 class="h5-strong mb-0">{{ title }}</h5>
+      <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
+    </div>
+
+    <!-- Body -->
+    <div class="dialog-body">
+      <p>{{ message }}</p>
+    </div>
+
+    <!-- Footer / Actions -->
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+        {{ cancelText }}
+      </button>
+      <button 
+        type="button" 
+        class="btn"
+        [ngClass]="'btn-soft-' + confirmButtonType"
+        (click)="onConfirm()">
+        {{ confirmText }}
+      </button>
+    </div>
+  </div>
+</div>

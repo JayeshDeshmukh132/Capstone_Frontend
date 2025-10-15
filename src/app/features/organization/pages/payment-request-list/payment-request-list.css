@@ -1,0 +1,27 @@
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.table {
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 0.4em 0.7em;
+  font-weight: 600;
+}
+
+/* Status colors for badges */
+.status-pending { background-color: #ffc107; color: black; }
+.status-approved { background-color: #198554; color: white; }
+.status-rejected { background-color: #dc3545; color: white; }
+.status-processed { background-color: #0d6efd; color: white; }
+/* Add any other statuses your backend might return */
+
+.nav-tabs .nav-link {
+  cursor: pointer;
+}
