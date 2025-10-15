@@ -1,0 +1,71 @@
+<section class="card-soft">
+  <div class="list-header">
+    <div>
+      <h5 class="h5-strong">Clients & Vendors</h5>
+      <p class="small-muted">Manage your organization's clients and vendors.</p>
+    </div>
+    <button class="btn btn-soft-primary" (click)="isCreateDialogVisible.set(true)">
+      Add New
+    </button>
+  </div>
+
+ 
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab() === ClientVendorType.CLIENT" (click)="setActiveTab(ClientVendorType.CLIENT)">Clients</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab() === ClientVendorType.VENDOR" (click)="setActiveTab(ClientVendorType.VENDOR)">Vendors</a>
+    </li>
+  </ul>
+
+ 
+  <div *ngIf="loading()" class="text-center my-5">...Loading...</div>
+  <div *ngIf="error()" class="alert-soft-danger my-3">{{ error() }}</div>
+
+ 
+  <div *ngIf="!loading() && !error() && page() as dataPage">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Contact Email</th>
+          <th>Contact Phone</th>
+          <th>Account Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of dataPage.content">
+          <td>{{ item.name }}</td>
+          <td>{{ item.contactEmail }}</td>
+          <td>{{ item.contactPhone }}</td>
+          <td>{{ item.accountNumber }}</td>
+        </tr>
+        <tr *ngIf="dataPage.empty">
+          <td colspan="4" class="text-center text-muted py-4">No {{ activeTab() | lowercase }}s found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+   
+    <nav *ngIf="dataPage.totalPages > 1" class="d-flex justify-content-end">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="dataPage.first">
+          <button class="page-link" (click)="handlePageChange(dataPage.number - 1)">Previous</button>
+        </li>
+        <li class="page-item active">
+          <span class="page-link">{{ dataPage.number + 1 }} of {{ dataPage.totalPages }}</span>
+        </li>
+        <li class="page-item" [class.disabled]="dataPage.last">
+          <button class="page-link" (click)="handlePageChange(dataPage.number + 1)">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+
+<app-create-client-vendor-dialog
+  *ngIf="isCreateDialogVisible()"
+  (closed)="onDialogClosed($event)">
+</app-create-client-vendor-dialog>

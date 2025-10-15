@@ -1,0 +1,39 @@
+.list-header { /* ... same as employee list ... */ }
+.account-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.account-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.account-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.account-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+}
+.account-number {
+  font-weight: 600;
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+.badge { font-size: 0.8rem; }
+.status-active, .status-approved { background-color: #198754; color: white; }
+.status-inactive, .status-rejected { background-color: #6c757d; color: white; }
+.status-pending { background-color: #ffc107; color: black; }
+.account-card-body { padding-top: 1rem; }
+.balance-label { font-size: 0.9rem; color: #6c757d; }
+.balance-amount { font-size: 1.75rem; font-weight: 300; }

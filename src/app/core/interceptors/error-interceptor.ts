@@ -12,8 +12,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     tap({
       error: (err: unknown) => {
         const e = err as HttpErrorResponse;
+        
         if (e?.status === 401) {
-          //auth.logout();
+          // auth.logout();
           router.navigate(['/login']);
         }
       }

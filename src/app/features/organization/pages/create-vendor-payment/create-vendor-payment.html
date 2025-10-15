@@ -1,0 +1,79 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h5 class="h5-strong">New Vendor Payment</h5>
+    <p class="small-muted mb-0">Select a vendor, source account, and amount to create a payment request.</p>
+  </div>
+  <a routerLink="/org/payment-requests" class="btn btn-outline-secondary btn-sm">Back to List</a>
+</div>
+
+<section class="card-soft">
+  <div *ngIf="status() === 'loading'" class="text-center p-5">...Loading Data...</div>
+
+  <form *ngIf="status() !== 'loading'" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="card-body">
+      <div *ngIf="successMessage()" class="alert-soft-success">{{ successMessage() }}</div>
+      <div *ngIf="errorMessage()" class="alert-soft-danger">{{ errorMessage() }}</div>
+
+      <div class="row">
+        <!-- Vendor Selection -->
+        <div class="col-md-6 mb-3">
+          <label for="clientVendorId" class="form-label fw-semibold">Pay To Vendor</label>
+          <select id="clientVendorId" class="form-select" formControlName="clientVendorId">
+            <option [ngValue]="null" disabled>Select a vendor...</option>
+            <option *ngFor="let vendor of vendors()" [ngValue]="vendor.id">
+              {{ vendor.name }} ({{ vendor.accountNumber }})
+            </option>
+          </select>
+          <div *ngIf="vendors().length === 0" class="small-muted mt-1">
+            No vendors found. <a routerLink="/org/clients-vendors">Add one here</a>.
+          </div>
+          <div *ngIf="form.controls.clientVendorId.touched && form.controls.clientVendorId.hasError('required')" class="text-danger small mt-1">
+            Please select a vendor.
+          </div>
+        </div>
+
+        <!-- Bank Account Selection -->
+        <div class="col-md-6 mb-3">
+          <label for="bankAccountId" class="form-label fw-semibold">Pay From Account</label>
+          <select id="bankAccountId" class="form-select" formControlName="bankAccountId">
+            <option [ngValue]="null" disabled>Select a source account...</option>
+            <option *ngFor="let acc of bankAccounts()" [ngValue]="acc.id">
+              {{ acc.bankAccountNumber }} (Balance: {{ acc.balance | currency:'INR' }})
+            </option>
+          </select>
+          <div *ngIf="form.controls.bankAccountId.touched && form.controls.bankAccountId.hasError('required')" class="text-danger small mt-1">
+            Please select a bank account.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="amount" class="form-label fw-semibold">Payment Amount</label>
+        <div class="input-group">
+          <span class="input-group-text">₹</span>
+          <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="0.00" />
+        </div>
+         <div *ngIf="form.controls.amount.touched && form.controls.amount.hasError('required')" class="text-danger small mt-1">
+            Amount is required.
+          </div>
+          <div *ngIf="form.controls.amount.touched && form.controls.amount.hasError('min')" class="text-danger small mt-1">
+            Amount must be a positive number.
+          </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label fw-semibold">Description / Invoice #</label>
+        <textarea id="description" class="form-control" formControlName="description" rows="3"></textarea>
+         <div *ngIf="form.controls.description.touched && form.controls.description.hasError('required')" class="text-danger small mt-1">
+            A description is required.
+          </div>
+      </div>
+      
+      <div class="form-actions mt-3 d-flex justify-content-end">
+        <button type="submit" class="btn btn-soft-primary" [disabled]="status() === 'submitting'">
+          {{ status() === 'submitting' ? 'Submitting...' : 'Submit Vendor Payment' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

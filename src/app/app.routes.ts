@@ -5,14 +5,11 @@ import { authRedirectGuard } from './core/guards/auth-redirect.guards';
 export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login'),
-    canActivate: [authRedirectGuard],
+    loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
   },
   {
     path: 'org',
-    loadComponent: () => import('./features/organization/organization').then((m) => m.Organization),
-    canActivate: [authGuard],
-    data: { roles: ['ROLE_ORGANIZATION'] },
+    loadChildren: () => import('./features/organization/organization.routes').then(m => m.organizationRoutes)
   },
   {
     path: 'bank-admin',

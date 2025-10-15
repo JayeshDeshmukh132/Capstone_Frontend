@@ -1,0 +1,131 @@
+<section class="card-soft">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="h5-strong mb-0">Update Employee Details</h5>
+    <a routerLink="/org/employees" class="btn btn-outline-secondary btn-sm">Back to List</a>
+  </div>
+
+  <!-- Alert Popup -->
+  <div *ngIf="alert()" [class]="'alert-popup ' + alert()!.type" role="alert">
+    <div class="alert-popup-content">
+      <div class="alert-message">{{ alert()!.message }}</div>
+    </div>
+    <button type="button" class="btn-close" (click)="hideAlert()" aria-label="Close"></button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="text-center my-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading employee data...</p>
+  </div>
+
+  <!-- Form -->
+  <form *ngIf="!loading()" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="employeeId" class="form-label fw-semibold">Employee ID</label>
+        <input type="text" id="employeeId" class="form-control" formControlName="employeeId" />
+        <div
+          *ngIf="form.controls.employeeId.touched && form.controls.employeeId.hasError('required')"
+          class="text-danger small mt-1"
+        >
+          Employee ID is required.
+        </div>
+      </div>
+
+      
+      <div class="col-md-6 mb-3">
+        <label for="email" class="form-label fw-semibold">Email Address</label>
+        <input type="email" id="email" class="form-control" formControlName="email" />
+        <div
+          *ngIf="form.controls.email.touched && form.controls.email.hasError('required')"
+          class="text-danger small mt-1"
+        >
+          Email is required.
+        </div>
+        <div
+          *ngIf="form.controls.email.touched && form.controls.email.hasError('email')"
+          class="text-danger small mt-1"
+        >
+          Please enter a valid email address.
+        </div>
+      </div>
+    </div>
+
+   
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="firstName" class="form-label fw-semibold">First Name</label>
+        <input
+          type="text"
+          id="firstName"
+          class="form-control"
+          formControlName="firstName"
+          required
+        />
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="lastName" class="form-label fw-semibold">Last Name</label>
+        <input type="text" id="lastName" class="form-control" formControlName="lastName" required />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="designation" class="form-label fw-semibold">Designation</label>
+        <input
+          type="text"
+          id="designation"
+          class="form-control"
+          formControlName="designation"
+          required
+        />
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="department" class="form-label fw-semibold">Department</label>
+        <input
+          type="text"
+          id="department"
+          class="form-control"
+          formControlName="department"
+          required
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="accountNumber" class="form-label fw-semibold">Bank Account Number</label>
+        <input
+          type="text"
+          id="accountNumber"
+          class="form-control"
+          formControlName="accountNumber"
+          required
+        />
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="ifscCode" class="form-label fw-semibold">IFSC Code</label>
+        <input type="text" id="ifscCode" class="form-control" formControlName="ifscCode" required />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="joiningDate" class="form-label fw-semibold">Joining Date</label>
+        <input
+          type="date"
+          id="joiningDate"
+          class="form-control"
+          formControlName="joiningDate"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="form-actions mt-3">
+      <button type="submit" class="btn btn-soft-primary" [disabled]="saving()">
+        {{ saving() ? 'Saving Changes...' : 'Save Changes' }}
+      </button>
+    </div>
+  </form>
+</section>

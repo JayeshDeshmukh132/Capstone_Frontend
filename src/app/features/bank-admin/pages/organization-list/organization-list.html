@@ -1,3 +1,49 @@
+<<<<<<< HEAD
+<div class="container">
+    <h1>Organizations</h1>
+    <button mat-flat-button color="primary" (click)="openCreateDialog()">
+        Create New Organization
+    </button>
+
+    @if (state().isLoading) {
+    <p>Loading organizations...</p>
+    } @else if (state().error) {
+    <p class="error-message">{{ state().error }}</p>
+    } @else if (state().page?.content) {
+    <mat-table [dataSource]="state().page!.content" class="mat-elevation-z8">
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+            <mat-cell *matCellDef="let org">{{ org.name }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+            <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+            <mat-cell *matCellDef="let org">{{ org.email }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let org" [class]="org.status | lowercase">
+                {{ org.status }}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let org">
+                <a mat-button [routerLink]="['/bank-admin/organizations', org.id]">View Details</a>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <mat-paginator [length]="state().page!.totalElements" [pageSize]="state().page!.size"
+        [pageIndex]="state().page!.number" [pageSizeOptions]="[5, 10, 20]" (page)="handlePageEvent($event)">
+    </mat-paginator>
+    }
+=======
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Organizations</h1>
@@ -137,4 +183,5 @@
             </div>
         </div>
     </div>
+>>>>>>> bfe16112ad3d0f1056fa86ed2757c60fe77dfb19
 </div>

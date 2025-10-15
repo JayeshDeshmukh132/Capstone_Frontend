@@ -1,0 +1,95 @@
+<div class="dialog-backdrop" (click)="close(false)">
+  <div class="dialog-container card-soft" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h5 class="h5-strong mb-0">Add New Client / Vendor</h5>
+      <button type="button" class="btn-close" (click)="close(false)" aria-label="Close"></button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="dialog-body">
+
+        <!-- FIX: Re-added the missing Type selection -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Type</label>
+          <div class="d-flex gap-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="typeClient" [value]="ClientVendorType.CLIENT" formControlName="type">
+              <label class="form-check-label" for="typeClient">Client</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="typeVendor" [value]="ClientVendorType.VENDOR" formControlName="type">
+              <label class="form-check-label" for="typeVendor">Vendor</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIX: All fields now have detailed validation messages -->
+        <div class="mb-3">
+          <label for="name" class="form-label fw-semibold">Name / Company Name</label>
+          <input type="text" id="name" class="form-control" formControlName="name" />
+          <div *ngIf="form.controls.name.touched && form.controls.name.hasError('required')" class="text-danger small mt-1">
+            Name is required.
+          </div>
+          <div *ngIf="form.controls.name.touched && form.controls.name.hasError('minlength')" class="text-danger small mt-1">
+            Name must be at least 2 characters long.
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="contactEmail" class="form-label fw-semibold">Contact Email</label>
+            <input type="email" id="contactEmail" class="form-control" formControlName="contactEmail" />
+            <div *ngIf="form.controls.contactEmail.touched && form.controls.contactEmail.hasError('required')" class="text-danger small mt-1">
+              Email is required.
+            </div>
+            <div *ngIf="form.controls.contactEmail.touched && form.controls.contactEmail.hasError('email')" class="text-danger small mt-1">
+              Please enter a valid email address.
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="contactPhone" class="form-label fw-semibold">Contact Phone</label>
+            <input type="tel" id="contactPhone" class="form-control" formControlName="contactPhone" />
+            <div *ngIf="form.controls.contactPhone.touched && form.controls.contactPhone.hasError('required')" class="text-danger small mt-1">
+              Phone number is required.
+            </div>
+            <div *ngIf="form.controls.contactPhone.touched && form.controls.contactPhone.hasError('pattern')" class="text-danger small mt-1">
+              Please enter a valid 10-digit phone number.
+            </div>
+          </div>
+        </div>
+        <hr class="my-2" />
+        <h6 class="h6-strong mb-3">Bank Details</h6>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="accountNo" class="form-label fw-semibold">Account Number</label>
+            <input type="text" id="accountNo" class="form-control" formControlName="accountNo" />
+            <div *ngIf="form.controls.accountNo.touched && form.controls.accountNo.hasError('required')" class="text-danger small mt-1">
+              Account number is required.
+            </div>
+            <div *ngIf="form.controls.accountNo.touched && form.controls.accountNo.hasError('pattern')" class="text-danger small mt-1">
+              Please enter a valid account number (9-18 digits).
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="ifscCode" class="form-label fw-semibold">IFSC Code</label>
+            <input type="text" id="ifscCode" class="form-control" formControlName="ifscCode" style="text-transform: uppercase;" />
+            <div *ngIf="form.controls.ifscCode.touched && form.controls.ifscCode.hasError('required')" class="text-danger small mt-1">
+              IFSC Code is required.
+            </div>
+            <div *ngIf="form.controls.ifscCode.touched && form.controls.ifscCode.hasError('pattern')" class="text-danger small mt-1">
+              Please enter a valid 11-character IFSC code.
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="errorMessage()" class="alert-soft-danger mt-3">{{ errorMessage() }}</div>
+      </div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="close(false)">Cancel</button>
+        <button type="submit" class="btn btn-soft-primary" [disabled]="status() === 'submitting'">
+          {{ status() === 'submitting' ? 'Saving...' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

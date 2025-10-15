@@ -89,6 +89,30 @@ export interface Notification {
   createdAt: string;
 }
 
+export interface JobLaunchResponse {
+  jobExecutionId: number;
+  message: string;
+}
+
+export interface FailedRecordInfo {
+  lineNumber: number;
+  firstName: string;
+  lastName?: string;
+  email?: string;
+  reason: string;
+}
+
+export interface JobCompletionResponse {
+  jobExecutionId: number;
+  status: 'COMPLETED' | 'STARTING' | 'STARTED' | 'STOPPING' | 'STOPPED' | 'FAILED' | 'ABANDONED' | 'UNKNOWN';
+  // --- FIX: Remove the optional '?' markers ---
+  // The backend always sends these values, so they should not be optional.
+  totalRecordsProcessed: number;
+  successfulRecords: number;
+  failedRecords: number; // The count
+  failedRecordDetails: FailedRecordInfo[]; // The array of details
+}
+
 export interface OrganizationDocument {
   id: number;
   organizationId: number;

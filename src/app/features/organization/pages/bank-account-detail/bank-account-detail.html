@@ -1,0 +1,82 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="h5-strong">Bank Account Details</h5>
+  <a routerLink="/org/bank-accounts" class="btn btn-outline-secondary btn-sm">Back to List</a>
+</div>
+
+<!-- Main Details Section -->
+<div class="card-soft mb-4">
+  <div class="card-header">
+    <strong>Account Information</strong>
+  </div>
+
+  <!-- Loading State for Account Details -->
+  <div *ngIf="accountLoading()" class="text-center p-5">
+    <div class="spinner-border spinner-border-sm" role="status"></div>
+    <span class="ms-2">Loading account details...</span>
+  </div>
+
+  <!-- Error State for Account Details -->
+  <div *ngIf="accountError()" class="alert-soft-danger m-3">{{ accountError() }}</div>
+
+  <!-- Data Display for Account Details -->
+  <div *ngIf="account() as acc">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item d-flex justify-content-between">
+        <strong>Account Number:</strong> 
+        <span>{{ acc.bankAccountNumber }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between">
+        <strong>IFSC Code:</strong> 
+        <span>{{ acc.ifscCode }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between">
+        <strong>Branch:</strong> 
+        <span>{{ acc.branchName }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between">
+        <strong>Status:</strong> 
+        <span>{{ acc.bankStatus | titlecase }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between">
+        <strong>Balance:</strong> 
+        <span>{{ acc.balance | currency:'INR' }}</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- Documents Section -->
+<div class="card-soft">
+  <div class="card-header">
+    <strong>Associated Documents</strong>
+  </div>
+  <div class="card-body">
+    <!-- Loading State for Documents -->
+    <div *ngIf="documentsLoading()" class="text-center p-3">
+      <div class="spinner-border spinner-border-sm" role="status"></div>
+      <span class="ms-2">Loading documents...</span>
+    </div>
+
+    <!-- Error State for Documents -->
+    <div *ngIf="documentsError()" class="alert-soft-warning">{{ documentsError() }}</div>
+
+    <!-- Data Display for Documents -->
+    <div *ngIf="!documentsLoading() && !documentsError()">
+      <div *ngIf="documents().length > 0; else noDocs">
+        <ul class="list-unstyled">
+          <li *ngFor="let doc of documents()" class="mb-2">
+            <a [href]="doc.storedPath" target="_blank" rel="noopener noreferrer" class="document-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text me-2" viewBox="0 0 16 16"><path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/><path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/></svg>
+              {{ doc.displayName }}
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <ng-template #noDocs>
+        <p class="text-muted mb-0">No documents were found for this account.</p>
+      </ng-template>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+/* organization-complete.component.css */
+
+.complete-card {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+
+.complete-card .mat-card-title,
+.complete-card .h5-strong {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.complete-card .intro {
+  margin-bottom: 1rem;
+}
+
+.spinner-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+/* --- NEW: Alert Popup Styling --- */
+.alert-popup {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-popup-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.alert-icon {
+    flex-shrink: 0;
+    line-height: 0; /* Prevents extra space below SVG */
+}
+
+.alert-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.alert-message {
+    font-weight: 500;
+}
+
+/* Inherit colors from global styles */
+.alert-soft-success .alert-icon { color: #047857; }
+.alert-soft-warning .alert-icon { color: #b45309; }
+.alert-soft-danger .alert-icon { color: #8a1b1b; }
+
+
+/* form layout */
+.complete-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.file-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  color: var(--primary);
+}
+
+.file-input {
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  padding: 0.4rem;
+  background: #fafafa;
+}
+
+.file-input:hover { background: #f0f0f0; }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  .complete-card { padding: 1rem; }
+  .actions { flex-direction: column; align-items: stretch; }
+  .actions .btn { width: 100%; }
+}

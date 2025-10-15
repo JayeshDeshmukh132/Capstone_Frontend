@@ -1,0 +1,79 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h5 class="h5-strong">Process Salaries via CSV</h5>
+    <p class="small-muted mb-0">Select a source account, then upload your salary CSV file to begin processing.</p>
+  </div>
+  <a routerLink="/org/payment-requests" class="btn btn-outline-secondary btn-sm">Back to List</a>
+</div>
+
+<div *ngIf="status() === 'loading-data'" class="text-center p-5">...Loading Bank Accounts...</div>
+
+<div *ngIf="status() !== 'loading-data'">
+  <!-- Step 1: Account Selection -->
+  <section class="card-soft mb-4">
+    <div class="card-body">
+      <h6 class="h6-strong">Step 1: Select Source Bank Account</h6>
+      <div class="mb-3" style="max-width: 400px;">
+        <label for="bankAccountId" class="form-label">Pay From Account</label>
+        <select id="bankAccountId" class="form-select" [formControl]="selectedAccount" [class.is-invalid]="selectedAccount.touched && selectedAccount.invalid">
+          <option [ngValue]="null" disabled>Select an account...</option>
+          <option *ngFor="let acc of bankAccounts()" [ngValue]="acc.id">
+            ...{{ acc.bankAccountNumber.slice(-4) }} (Balance: {{ acc.balance | currency:'INR' }})
+          </option>
+        </select>
+        <div *ngIf="selectedAccount.touched && selectedAccount.hasError('required')" class="invalid-feedback">
+          You must select a bank account to proceed.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2 & 3: Uploader and Results -->
+  <section class="card-soft" [class.disabled-section]="selectedAccount.invalid">
+    <div class="card-body">
+      <h6 class="h6-strong">Step 2: Upload and Process Salary File</h6>
+      
+      <!-- IDLE STATE: Show the uploader -->
+      <div *ngIf="status() === 'idle'">
+        <p class="small-muted">The file must have the correct headers and data format.</p>
+        <div class="alert-soft-primary mb-3">
+          <a href="javascript:void(0)" (click)="downloadFormat()" class="alert-link">Download the required salary CSV format</a>
+        </div>
+        <div class="mb-3">
+          <input type="file" id="salaryFile" class="form-control" (change)="onFileSelected($event)" accept=".csv" />
+          <div *ngIf="selectedFile()" class="small-muted mt-1">Selected: {{ selectedFile()?.name }}</div>
+        </div>
+        <div *ngIf="errorMessage()" class="alert-soft-danger mt-3">{{ errorMessage() }}</div>
+        <div class="d-flex justify-content-end mt-3">
+          <button type="button" class="btn btn-soft-primary" [disabled]="!selectedFile()" (click)="processFile()">
+            Process File
+          </button>
+        </div>
+      </div>
+      
+      <!-- SUBMITTING STATE: Show spinner -->
+      <div *ngIf="status() === 'submitting'" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-3">Processing file, this may take a moment...</p>
+      </div>
+
+      <!-- RESULT STATE: Show the summary -->
+      <div *ngIf="status() === 'result' && uploadResult() as result">
+        <h6 class="h6-strong">Processing Complete</h6>
+        <div class="result-summary">
+          <div class="text-success"><strong>Successfully Processed:</strong> {{ result.successfulRecords }}</div>
+          <div [class.text-danger]="result.failedRecords > 0"><strong>Records Failed:</strong> {{ result.failedRecords }}</div>
+        </div>
+        <div *ngIf="result.errorDetails && result.errorDetails.length > 0" class="mt-3">
+          <h6 class="h6-strong text-danger">Processing Errors</h6>
+          <ul class="error-list">
+            <li *ngFor="let error of result.errorDetails">{{ error }}</li>
+          </ul>
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+          <button type="button" class="btn btn-outline-secondary" (click)="processAnother()">Process Another File</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

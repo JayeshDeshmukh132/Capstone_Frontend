@@ -1,10 +1,37 @@
-<div style="padding: 1rem">
-  <h2>Organization Page</h2>
-  <p>Welcome, role: ORG</p>
-  @if (token) {
-  <p>Token (start): {{ token.slice(0, 60) }}{{ token.length > 60 ? '...' : '' }}</p>
-  } @else {
-  <p>No token found.</p>
-  }
-  <button (click)="logout()">Logout</button>
+<div class="org-layout">
+  <!-- Simple Sidebar Navigation -->
+  <aside class="org-sidebar">
+    <h4 class="sidebar-title">Organization Portal</h4>
+    <nav class="org-nav">
+      <a routerLink="dashboard" routerLinkActive="active-link" class="nav-link">
+        <!-- Add an icon if you like -->
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="employees/new" routerLinkActive="active-link" class="nav-link">
+        <span>Add Employee</span>
+      </a>
+      <!-- Add more links here for Employees List, etc. -->
+      <a routerLink="employees" routerLinkActive="active-link" class="nav-link">
+        <span>Employees</span>
+      </a>
+      <a routerLink="bank-accounts" routerLinkActive="active-link" class="nav-link"
+        ><span>Bank Accounts</span>
+      </a>
+      <a routerLink="clients-vendors" routerLinkActive="active-link" class="nav-link">
+        <span>Clients & Vendors</span>
+      </a>
+      <a routerLink="payment-requests" routerLinkActive="active-link" class="nav-link">
+        <span>Payment Requests</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button (click)="logout()" class="btn btn-outline-danger w-100">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="org-content">
+    <!-- The content of child routes (dashboard, create-employee) will be rendered here -->
+    <router-outlet></router-outlet>
+  </main>
 </div>

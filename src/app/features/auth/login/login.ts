@@ -13,7 +13,7 @@ import { environment } from '../../../../environments/environment';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgxCaptchaModule // Add the reCAPTCHA module to your imports
+    NgxCaptchaModule, // Add the reCAPTCHA module to your imports
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
