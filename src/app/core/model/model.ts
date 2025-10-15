@@ -32,6 +32,29 @@ export enum NotificationStatus {
   UNREAD = 'UNREAD',
 }
 
+export enum DocumentStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export enum PaymentType {
+  SALARY = 'SALARY',
+  VENDOR = 'VENDOR',
+}
+
+export enum RequestStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export interface BankAccountDocument {
+  id: number;
+  displayName: string;
+  storedPath: string;
+}
+
 // Main Interfaces
 export interface Organization {
   id: number;
@@ -88,4 +111,59 @@ export interface JobCompletionResponse {
   successfulRecords: number;
   failedRecords: number; // The count
   failedRecordDetails: FailedRecordInfo[]; // The array of details
+}
+
+export interface OrganizationDocument {
+  id: number;
+  organizationId: number;
+  storedPath: string;
+  displayName: string;
+  originalFilename: string;
+  uploadedAt: string;
+  note: string;
+  status: DocumentStatus;
+}
+
+// For the list view
+export interface BankAccountListItem {
+  id: number;
+  organizationName: string;
+  bankAccountNumber: string;
+  branchName: string;
+  bankStatus: BankAccountStatus;
+}
+
+// For the detailed view
+export interface BankAccountDetail {
+  id: number;
+  organizationId: number;
+  organizationName: string;
+  bankAccountNumber: string;
+  ifscCode: string;
+  branchName: string;
+  bankStatus: BankAccountStatus;
+  balance: number;
+  docsUrl: string;
+  note: string;
+  documents: BankAccountDocument[];
+}
+
+export interface PaymentRequest {
+  id: number;
+  organizationName: string;
+  amount: number;
+  paymentType: PaymentType;
+  status: RequestStatus;
+  proofDocUrl: string;
+  createdAt: string;
+}
+
+export interface DepositRequest {
+  id: number;
+  organizationName: string;
+  amount: number;
+  paymentType: PaymentType; // Following your API response structure
+  status: RequestStatus;
+  proofDocUrl: string;
+  createdAt: string;
 }
