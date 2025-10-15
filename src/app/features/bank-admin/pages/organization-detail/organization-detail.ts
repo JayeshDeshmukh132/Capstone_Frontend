@@ -29,6 +29,11 @@ import { Organization, OrganizationStatus } from '../../../../core/model/model';
   ],
   templateUrl: './organization-detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    .toast-container {
+      z-index: 1090; /* This must be higher than the modal backdrop (1050) */
+    }
+  `,
 })
 export default class OrganizationDetailComponent implements AfterViewInit {
   // ## Injected Services
@@ -77,12 +82,12 @@ export default class OrganizationDetailComponent implements AfterViewInit {
   constructor() {
     // Reactively fetch data when the route ID changes
     effect(() => {
-    const orgId = this.route.snapshot.paramMap.get('id'); // Get the ID from the signal
-    
-    // ✅ Only fetch data if the ID has a valid value
-    if (orgId) {
-      this.fetchOrganization(orgId);
-    }
+      const orgId = this.route.snapshot.paramMap.get('id'); // Get the ID from the signal
+
+      // ✅ Only fetch data if the ID has a valid value
+      if (orgId) {
+        this.fetchOrganization(orgId);
+      }
     });
   }
 
@@ -123,31 +128,43 @@ export default class OrganizationDetailComponent implements AfterViewInit {
     this.updateModal?.show();
   }
 
+  // Inside your OrganizationDetailComponent class
+
   submitUpdate(): void {
     const org = this.selectedOrgForUpdate();
     const status = this.newStatusForUpdate();
 
+    // 1. Validate the form first
     if (this.updateForm.invalid || !org || !status) {
       this.updateForm.markAllAsTouched();
       return;
     }
-    
-    const note = this.updateForm.value.note ?? '';
 
-    this.bankAdminService.updateOrganizationStatus(Number(org.id), status, note).subscribe({
-      next: () => {
-        this.updateModal?.hide();
-        this.fetchOrganization(String(org.id)); // Refresh data
-        this.showToast('Organization status updated successfully!');
-      },
-      // ✅ MODIFY THIS ERROR BLOCK
-      error: (err) => {
-        this.updateModal?.hide(); // Still hide the modal on error
-        // Extract the specific message from the API response
-        const errorMessage = err.error?.message || 'An unexpected error occurred.';
-        this.showToast(errorMessage, true); // Show the error toast
-      },
-    });
+    const modalEl = this.updateModalElement().nativeElement;
+
+    // 2. Define the logic to run AFTER the modal is hidden
+    const afterModalHidden = () => {
+      // 4. Show the "Updating..." toast
+      this.showToast('Updating organization status...', false);
+
+      const note = this.updateForm.value.note ?? '';
+
+      // 5. Make the API call
+      this.bankAdminService.updateOrganizationStatus(Number(org.id), status, note).subscribe({
+        next: () => {
+          this.fetchOrganization(String(org.id));
+          this.showToast('Organization status updated successfully!');
+        },
+        error: (err) => {
+          const errorMessage = err.error?.message || 'An unexpected error occurred.';
+          this.showToast(errorMessage, true);
+        },
+      });
+    };
+
+    // 3. Listen for the 'hidden' event just once, then start hiding the modal
+    modalEl.addEventListener('hidden.bs.modal', afterModalHidden, { once: true });
+    this.updateModal?.hide();
   }
 
   // ## Helper Functions

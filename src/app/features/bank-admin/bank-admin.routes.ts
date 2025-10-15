@@ -19,9 +19,22 @@ export const BANK_ADMIN_ROUTES: Routes = [
         path: 'organizations/:id/documents', // The 'id' is the organizationId
         loadComponent: () => import('./pages/organization-documents/organization-documents'),
       },
+
       {
         path: 'notifications',
         loadComponent: () => import('./pages/notifications/notifications'),
+      },
+      {
+        path: 'organizations/:orgId/accounts',
+        loadComponent: () => import('./pages/bank-account-list/bank-account-list'),
+      },
+      {
+        path: 'organizations/:orgId/accounts/:accountId',
+        loadComponent: () => import('./pages/bank-account-detail/bank-account-detail'),
+      },
+      {
+        path: 'organizations/:orgId/requests',
+        loadComponent: () => import('./pages/pending-requests/pending-requests'),
       },
     //   {
     //     path: 'settings',

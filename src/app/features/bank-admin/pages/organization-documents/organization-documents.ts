@@ -23,7 +23,6 @@ import { OrganizationDocument, DocumentStatus } from '../../../../core/model/mod
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     DatePipe,
     ReactiveFormsModule
   ],
